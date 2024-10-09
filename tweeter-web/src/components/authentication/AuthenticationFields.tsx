@@ -6,7 +6,7 @@ interface Props {
   setPassword: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const AuthenticationFields = ({ doOnEnter, setAlias, setPassword }: Props) => {
+const AuthenticationFields = (props : Props) => {
   return (
     <>
       <div className="form-floating">
@@ -16,8 +16,8 @@ const AuthenticationFields = ({ doOnEnter, setAlias, setPassword }: Props) => {
           size={50}
           id="aliasInput"
           placeholder="name@example.com"
-          onKeyDown={doOnEnter}
-          onChange={(event) => setAlias(event.target.value)}
+          onKeyDown={props.doOnEnter}
+          onChange={(event) => props.setAlias(event.target.value)}
         />
         <label htmlFor="aliasInput">Alias</label>
       </div>
@@ -27,8 +27,8 @@ const AuthenticationFields = ({ doOnEnter, setAlias, setPassword }: Props) => {
           className="form-control"
           id="passwordInput"
           placeholder="Password"
-          onKeyDown={doOnEnter}
-          onChange={(event) => setPassword(event.target.value)}
+          onKeyDown={props.doOnEnter}
+          onChange={(event) => props.setPassword(event.target.value)}
         />
         <label htmlFor="passwordInput">Password</label>
       </div>
