@@ -3,8 +3,8 @@ import { AuthToken, Status} from "tweeter-shared";
 import StatusItem from "../statusItem/StatusItem";
 import useToastListener from "../toaster/ToastListenerHook";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { PAGE_SIZE } from "./UserItemScroller";
 import useUserInfo from "../userInfo/UserInfoHook";
+import { PAGE_SIZE } from "../../presenters/FolloweePresenter";
 
 interface Props {
   loadItems: (
