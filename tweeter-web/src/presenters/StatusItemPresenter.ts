@@ -8,7 +8,6 @@ export interface StatusItemView {
 export abstract class StatusItemPresenter {
   private _hasMoreItems = true;
   private _lastItem: Status | null = null;
-
   private _view: StatusItemView;
 
   protected constructor(view: StatusItemView) {
