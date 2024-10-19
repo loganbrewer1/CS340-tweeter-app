@@ -35,6 +35,11 @@ const UserInfo = (props: Props) => {
     setNumbFollowers(authToken!, displayedUser!);
   }, [displayedUser]);
 
+  const switchToLoggedInUser = (event: React.MouseEvent): void => {
+    event.preventDefault();
+    setDisplayedUser(currentUser!);
+  };
+
   const setIsFollowerStatus = async (
     authToken: AuthToken,
     currentUser: User,
