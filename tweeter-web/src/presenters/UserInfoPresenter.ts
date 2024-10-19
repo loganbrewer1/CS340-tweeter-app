@@ -15,7 +15,7 @@ export class UserInfoPresenter {
   private _view: UserInfoView;
   private userService: UserService;
 
-  protected constructor(view: UserInfoView) {
+  public constructor(view: UserInfoView) {
     this._view = view;
     this.userService = new UserService();
   }
