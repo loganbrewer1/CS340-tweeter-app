@@ -1,5 +1,5 @@
 import { AuthToken, User } from "tweeter-shared";
-import { UserService } from "../model/service/UserService";
+import FollowService from "../model/service/FollowService";
 
 export interface UserInfoView {
   setIsFollower: (isFollower: boolean) => void;
@@ -13,11 +13,11 @@ export interface UserInfoView {
 
 export class UserInfoPresenter {
   private _view: UserInfoView;
-  private userService: UserService;
+  private followService: FollowService;
 
   public constructor(view: UserInfoView) {
     this._view = view;
-    this.userService = new UserService();
+    this.followService = new FollowService();
   }
 
   protected get view() {
@@ -34,7 +34,11 @@ export class UserInfoPresenter {
         this.view.setIsFollower(false);
       } else {
         this.view.setIsFollower(
-          await this.userService.getIsFollowerStatus(authToken!, currentUser!, displayedUser!)
+          await this.followService.getIsFollowerStatus(
+            authToken!,
+            currentUser!,
+            displayedUser!
+          )
         );
       }
     } catch (error) {
@@ -46,7 +50,9 @@ export class UserInfoPresenter {
 
   setNumbFollowees = async (authToken: AuthToken, displayedUser: User) => {
     try {
-      this.view.setFolloweeCount(await this.userService.getFolloweeCount(authToken, displayedUser));
+      this.view.setFolloweeCount(
+        await this.followService.getFolloweeCount(authToken, displayedUser)
+      );
     } catch (error) {
       this.view.displayErrorMessage(
         `Failed to get followees count because of exception: ${error}`
@@ -57,7 +63,7 @@ export class UserInfoPresenter {
   setNumbFollowers = async (authToken: AuthToken, displayedUser: User) => {
     try {
       this.view.setFollowerCount(
-        await this.userService.getFollowerCount(authToken, displayedUser)
+        await this.followService.getFollowerCount(authToken, displayedUser)
       );
     } catch (error) {
       this.view.displayErrorMessage(
@@ -77,7 +83,7 @@ export class UserInfoPresenter {
       this.view.setIsLoading(true);
       this.view.displayInfoMessage(`Following ${displayedUser!.name}...`, 0);
 
-      const [followerCount, followeeCount] = await this.userService.follow(
+      const [followerCount, followeeCount] = await this.followService.follow(
         authToken!,
         displayedUser!
       );
@@ -106,7 +112,7 @@ export class UserInfoPresenter {
       this.view.setIsLoading(true);
       this.view.displayInfoMessage(`Unfollowing ${displayedUser!.name}...`, 0);
 
-      const [followerCount, followeeCount] = await this.userService.unfollow(
+      const [followerCount, followeeCount] = await this.followService.unfollow(
         authToken!,
         displayedUser!
       );
