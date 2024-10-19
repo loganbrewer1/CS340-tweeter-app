@@ -30,6 +30,7 @@ export class LoginPresenter {
   protected get view() {
     return this._view;
   }
+  
   public async doLogin(alias: string, password: string, rememberMe: boolean) {
     try {
       this.view.setIsLoading(true);
