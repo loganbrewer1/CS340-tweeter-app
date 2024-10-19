@@ -74,6 +74,8 @@ const Login = (props: Props) => {
         doOnEnter={loginOnEnter}
         setAlias={setAlias}
         setPassword={setPassword}
+        alias={alias}
+        password={password}
       />
     );
   };
