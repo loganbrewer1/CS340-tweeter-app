@@ -2,10 +2,12 @@ import "./PostStatus.css";
 import { useState } from "react";
 import useToastListener from "../toaster/ToastListenerHook";
 import useUserInfo from "../userInfo/UserInfoHook";
-import { PostStatusPresenter, PostStatusView } from "../../presenters/PostStatusPresenter";
+import {
+  PostStatusPresenter,
+  PostStatusView,
+} from "../../presenters/PostStatusPresenter";
 
 interface Props {
-  originalUrl?: string;
   presenterGenerator: (view: PostStatusView) => PostStatusPresenter;
 }
 
@@ -17,19 +19,18 @@ const PostStatus = (props: Props) => {
   const [post, setPost] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-    
- const listener: PostStatusView = {
-   setPost: setPost,
-   setIsLoading: setIsLoading,
-   displayErrorMessage: displayErrorMessage,
-   displayInfoMessage: displayInfoMessage,
-   clearLastInfoMessage: clearLastInfoMessage
- };
+  const listener: PostStatusView = {
+    setPost: setPost,
+    setIsLoading: setIsLoading,
+    displayErrorMessage: displayErrorMessage,
+    displayInfoMessage: displayInfoMessage,
+    clearLastInfoMessage: clearLastInfoMessage,
+  };
 
- const [presenter] = useState(props.presenterGenerator(listener));
+  const [presenter] = useState(props.presenterGenerator(listener));
 
   const submitPost = async (event: React.MouseEvent) => {
-    presenter.submitPost(event, post, currentUser!, authToken!)
+    presenter.submitPost(event, post, currentUser!, authToken!);
   };
 
   const clearPost = (event: React.MouseEvent) => {
