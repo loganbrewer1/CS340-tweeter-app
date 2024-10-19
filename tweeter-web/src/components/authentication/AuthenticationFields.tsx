@@ -4,6 +4,8 @@ interface Props {
   doOnEnter: (event: React.KeyboardEvent<HTMLElement>) => void;
   setAlias: React.Dispatch<React.SetStateAction<string>>;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
+  alias: string;
+  password: string;
 }
 
 const AuthenticationFields = (props : Props) => {

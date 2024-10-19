@@ -25,6 +25,21 @@ const Register = () => {
   const { displayErrorMessage } = useToastListener();
 
   const checkSubmitButtonStatus = (): boolean => {
+    console.log(
+      "First: " +
+        firstName +
+        " Last: " +
+        lastName +
+        " Alias: " +
+        alias +
+        " Password: " +
+        password +
+        " Image URL: " +
+        imageUrl +
+        " Image File Extension: " +
+        imageFileExtension
+    );
+    
     return (
       !firstName ||
       !lastName ||
@@ -155,20 +170,20 @@ const Register = () => {
           />
           <label htmlFor="lastNameInput">Last Name</label>
         </div>
-        <div className="form-floating">
+        <AuthenticationFields
+          doOnEnter={registerOnEnter}
+          setAlias={setAlias}
+          setPassword={setPassword}
+          alias={alias}
+          password={password}
+        />
+        <div className="form-floating mb-3">
           <input
-            type="text"
-            className="form-control"
-            size={50}
-            id="aliasInput"
-            placeholder="name@example.com"
+            type="file"
+            className="d-inline-block py-5 px-4 form-control bottom"
+            id="imageFileInput"
             onKeyDown={registerOnEnter}
-            onChange={(event) => setAlias(event.target.value)}
-          />
-          <AuthenticationFields
-            doOnEnter={registerOnEnter}
-            setAlias={setAlias}
-            setPassword={setPassword}
+            onChange={handleFileChange}
           />
           <label htmlFor="imageFileInput">User Image</label>
           <img src={imageUrl} className="img-thumbnail" alt=""></img>
