@@ -2,11 +2,7 @@ import { User, AuthToken } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
 
 export interface LoginView {
-  setAlias: (alias: string) => void;
-  setPassword: (password: string) => void;
-  setRememberMe: (remember: boolean) => void;
   setIsLoading: (isLoading: boolean) => void;
-
   navigate: (path: string) => void;
   updateUserInfo: (
     currentUser: User,

@@ -34,9 +34,6 @@ const Login = (props: Props) => {
   };
   
  const listener: LoginView = {
-   setAlias: setAlias,
-   setPassword: setPassword,
-   setRememberMe: setRememberMe,
    setIsLoading: setIsLoading,
    navigate: navigate,
    updateUserInfo: updateUserInfo,

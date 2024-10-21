@@ -39,14 +39,9 @@ const Register = (props: Props) => {
   };
 
  const listener: RegisterView = {
-   setFirstName: setFirstName,
-   setLastName: setLastName,
-   setAlias: setAlias,
-   setPassword: setPassword,
    setImageBytes: setImageBytes,
    setImageUrl: setImageUrl,
    setImageFileExtension: setImageFileExtension,
-   setRememberMe: setRememberMe,
    setIsLoading: setIsLoading,
    navigate: navigate,
    updateUserInfo: updateUserInfo,

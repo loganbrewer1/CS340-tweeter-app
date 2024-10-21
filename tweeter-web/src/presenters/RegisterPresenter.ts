@@ -4,14 +4,9 @@ import { AuthToken, User } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
 
 export interface RegisterView {
-  setFirstName: (firstName: string) => void;
-  setLastName: (lastName: string) => void;
-  setAlias: (alias: string) => void;
-  setPassword: (password: string) => void;
   setImageBytes: (bytes: Uint8Array) => void;
   setImageUrl: (url: string) => void;
   setImageFileExtension: (extension: string) => void;
-  setRememberMe: (remember: boolean) => void;
   setIsLoading: (isLoading: boolean) => void;
 
   navigate: (path: string) => void;
