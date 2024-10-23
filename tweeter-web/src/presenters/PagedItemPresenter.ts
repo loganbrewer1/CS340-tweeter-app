@@ -7,9 +7,7 @@ export interface PagedItemView<T> extends View {
   addItems: (items: T[]) => void;
 }
 
-export abstract class PagedItemPresenter<T, U> extends Presenter<
-  PagedItemView<T>
-> {
+export abstract class PagedItemPresenter<T, U> extends Presenter<PagedItemView<T>> {
   private _service: U;
   private _hasMoreItems: boolean = true;
   private _lastItem: T | null = null;
@@ -41,7 +39,10 @@ export abstract class PagedItemPresenter<T, U> extends Presenter<
     this._lastItem = user;
   }
 
-  public async loadMoreItems(authToken: AuthToken, user: string): Promise<void> {
+  public async loadMoreItems(
+    authToken: AuthToken,
+    user: string
+  ): Promise<void> {
     this.doFailureReportingOperation(async () => {
       if (this.hasMoreItems) {
         let [newItems, hasMoreItems] = await this.getMoreItems(authToken, user);
@@ -51,6 +52,11 @@ export abstract class PagedItemPresenter<T, U> extends Presenter<
         this.view.addItems(newItems);
       }
     }, this.getItemDescription());
+  }
+
+  public reset() {
+    this.lastItem = null;
+    this.hasMoreItems = true;
   }
 
   protected abstract getMoreItems(
