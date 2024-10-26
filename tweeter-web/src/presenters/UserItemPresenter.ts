@@ -1,5 +1,5 @@
-import { AuthToken, User } from "tweeter-shared";
-import { Presenter, View } from "./Presenter";
+import { User } from "tweeter-shared";
+import { View } from "./Presenter";
 import { PagedItemPresenter } from "./PagedItemPresenter";
 import FollowService from "../model/service/FollowService";
 

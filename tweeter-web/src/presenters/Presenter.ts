@@ -10,7 +10,7 @@ export class Presenter<V extends View> {
   }
 
   protected get view(): V {
-    return this.view;
+    return this._view;
   }
 
   public async doFailureReportingOperation(

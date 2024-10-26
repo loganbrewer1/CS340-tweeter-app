@@ -1,51 +1,28 @@
-import { User, AuthToken } from "tweeter-shared";
-import { UserService } from "../model/service/UserService";
+import { AuthPresenter, AuthView } from "./AuthPresenter";
 
-export interface LoginView {
-  setIsLoading: (isLoading: boolean) => void;
-  navigate: (path: string) => void;
-  updateUserInfo: (
-    currentUser: User,
-    displayedUser: User | null,
-    authToken: AuthToken,
-    remember: boolean
-  ) => void;
-  displayErrorMessage: (message: string) => void;
+export interface LoginView extends AuthView {
   originalUrl?: string;
 }
 
-export class LoginPresenter {
-  private _view: LoginView;
-  private userService: UserService;
-
+export class LoginPresenter extends AuthPresenter<LoginView> {
   public constructor(view: LoginView) {
-    this._view = view;
-    this.userService = new UserService();
+    super(view);
   }
 
-  protected get view() {
-    return this._view;
-  }
-  
   public async doLogin(alias: string, password: string, rememberMe: boolean) {
-    try {
-      this.view.setIsLoading(true);
+    let pathToSend: string;
 
-      const [user, authToken] = await this.userService.login(alias, password);
-
-      this.view.updateUserInfo(user, user, authToken, rememberMe);
-
-      if (!!this.view.originalUrl) {
-        this.view.navigate(this.view.originalUrl);
-      } else {
-        this.view.navigate("/");
-      }
-    } catch (error) {
-      this.view.displayErrorMessage(
-        `Failed to log user in because of exception: ${error}`
-      );
-    } finally {
-      this.view.setIsLoading(false);
+    if (!!this.view.originalUrl) {
+      pathToSend = this.view.originalUrl;
+    } else {
+      pathToSend = "/";
     }
+
+    await this.handleAuthAction(
+      () => this.userService.login(alias, password),
+      rememberMe,
+      "log user in",
+      pathToSend
+    );
   }
 }
