@@ -13,7 +13,7 @@ export abstract class InfoPresenter<U, V extends InfoView> extends Presenter<V> 
     this._service = this.createService();
   }
 
-  protected get service() {
+  public get service() {
     return this._service;
   }
 
