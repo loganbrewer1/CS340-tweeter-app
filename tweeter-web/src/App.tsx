@@ -24,6 +24,11 @@ import {
   RegisterView,
 } from "./presenters/RegisterPresenter";
 import { LoginPresenter, LoginView } from "./presenters/LoginPresenter";
+import ItemScroller from "./components/mainLayout/ItemScroller";
+import { PagedItemPresenter, PagedItemView } from "./presenters/PagedItemPresenter";
+import { User } from "tweeter-shared";
+import UserItem from "./components/userItem/UserItem";
+import { UserService } from "./model/service/UserService";
 
 const App = () => {
   const { currentUser, authToken } = useUserInfo();
@@ -78,11 +83,12 @@ const AuthenticatedRoutes = () => {
         <Route
           path="followees"
           element={
-            <UserItemScroller
+            <ItemScroller<User, UserService>
               key={1}
-              presenterGenerator={(view: UserItemView) =>
+              presenterGenerator={(view: PagedItemView<User>) =>
                 new FolloweePresenter(view)
               }
+              itemComponentGenerator={(user) => <UserItem value={user} />}
             />
           }
         />
