@@ -83,12 +83,11 @@ const AuthenticatedRoutes = () => {
         <Route
           path="followees"
           element={
-            <ItemScroller<User, UserService>
+            <UserItemScroller
               key={1}
-              presenterGenerator={(view: PagedItemView<User>) =>
+              presenterGenerator={(view: UserItemView) =>
                 new FolloweePresenter(view)
               }
-              itemComponentGenerator={(user) => <UserItem value={user} />}
             />
           }
         />
