@@ -43,7 +43,6 @@ describe("AppNavbarPresenter", () => {
 
     verify(mockAppNavbarView.clearLastInfoMessage()).once();
     verify(mockAppNavbarView.clearUserInfo()).once();
-    //verify(appNavbarPresenter.navigateToLogin()).once();
 
     verify(mockAppNavbarView.displayErrorMessage(anything())).never();
   });
@@ -62,6 +61,5 @@ describe("AppNavbarPresenter", () => {
 
     verify(mockAppNavbarView.clearLastInfoMessage()).never();
     verify(mockAppNavbarView.clearUserInfo()).never();
-    //verify(appNavbarPresenter.navigateToLogin()).never();
   });
 });
