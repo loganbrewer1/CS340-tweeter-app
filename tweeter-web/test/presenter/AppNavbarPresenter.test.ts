@@ -15,10 +15,10 @@ describe("AppNavbarPresenter", () => {
 
   beforeEach(() => {
     mockAppNavbarView = mock<AppNavbarView>();
-    const mockAppNavbarPresenterViewInstance = instance(mockAppNavbarView);
+    const mockAppNavbarViewInstance = instance(mockAppNavbarView);
 
     const appNavbarPresenterSpy = spy(
-      new AppNavbarPresenter(mockAppNavbarPresenterViewInstance)
+      new AppNavbarPresenter(mockAppNavbarViewInstance)
     );
     appNavbarPresenter = instance(appNavbarPresenterSpy);
 
