@@ -30,7 +30,8 @@ const PostStatus = (props: Props) => {
   const [presenter] = useState(props.presenterGenerator(listener));
 
   const submitPost = async (event: React.MouseEvent) => {
-    presenter.submitPost(event, post, currentUser!, authToken!);
+    event.preventDefault();
+    presenter.submitPost(post, currentUser!, authToken!);
   };
 
   const clearPost = (event: React.MouseEvent) => {

@@ -15,14 +15,11 @@ export class UserNavigationPresenter extends Presenter<UserNavigationView> {
   }
 
   public async navigateToUser(
-    event: React.MouseEvent,
     authToken: AuthToken | null,
-    currentUser: User | null
+    currentUser: User | null,
+    alias: string
   ): Promise<void> {
-    event.preventDefault();
     this.doFailureReportingOperation(async () => {
-      const alias = this.extractAlias(event.target.toString());
-
       const user = await this.userService.getUser(authToken!, alias);
 
       if (!!user) {
@@ -33,10 +30,5 @@ export class UserNavigationPresenter extends Presenter<UserNavigationView> {
         }
       }
     }, "get user");
-  }
-
-  private extractAlias(value: string): string {
-    const index = value.indexOf("@");
-    return value.substring(index);
   }
 }

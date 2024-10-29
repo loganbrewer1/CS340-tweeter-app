@@ -58,11 +58,9 @@ export class UserInfoPresenter extends InfoPresenter<
   };
 
   followDisplayedUser = async (
-    event: React.MouseEvent,
     authToken: AuthToken,
     displayedUser: User
   ): Promise<void> => {
-    event.preventDefault();
     await this.doFailureReportingOperation(async () => {
       this.view.setIsLoading(true);
       this.view.displayInfoMessage(`Following ${displayedUser!.name}...`, 0);
@@ -81,11 +79,9 @@ export class UserInfoPresenter extends InfoPresenter<
   };
 
   public async unfollowDisplayedUser(
-    event: React.MouseEvent,
     authToken: AuthToken,
     displayedUser: User
   ): Promise<void> {
-    event.preventDefault();
     await this.doFailureReportingOperation(async () => {
       this.view.setIsLoading(true);
       this.view.displayInfoMessage(`Unfollowing ${displayedUser!.name}...`, 0);

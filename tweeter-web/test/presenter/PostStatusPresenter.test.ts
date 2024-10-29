@@ -11,7 +11,6 @@ describe("PostStatusPresenter", () => {
   let mockPostStatusView: PostStatusView;
   let mockStatusService: StatusService;
 
-  const mockEvent = new MouseEvent("click") as unknown as React.MouseEvent;
   const mockPost = "Hello world!";
   const mockUser = new User("Logan", "Brewer", "Hombre", "hotPicture");
   const authToken = new AuthToken("WubbaDubbaGingGong", Date.now());
@@ -32,12 +31,12 @@ describe("PostStatusPresenter", () => {
   });
 
   it("tells the view to display a posting status message", () => {
-    postStatusPresenter.submitPost(mockEvent, mockPost, mockUser, authToken);
+    postStatusPresenter.submitPost(mockPost, mockUser, authToken);
     verify( mockPostStatusView.displayInfoMessage("Posting status...", 0)).once();
   });
 
   it("calls postStatus on the post status service with the correct status string and auth token", () => {
-    postStatusPresenter.submitPost(mockEvent, mockPost, mockUser, authToken);
+    postStatusPresenter.submitPost(mockPost, mockUser, authToken);
     verify( mockStatusService.postStatus(authToken, new Status(mockPost, mockUser, Date.now()))).once()
   })
 

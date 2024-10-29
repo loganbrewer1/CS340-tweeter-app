@@ -20,8 +20,16 @@ const useNavigateToUser = (
 
   // The navigateToUser function stays the same, using the presenter
   const navigateToUser = async (event: React.MouseEvent): Promise<void> => {
-    presenter.navigateToUser(event, authToken, currentUser);
+    event.preventDefault();
+    const alias = extractAlias(event.target.toString());
+    presenter.navigateToUser(authToken, currentUser, alias);
+    
   };
+
+  const extractAlias = (value: string): string => {
+    const index = value.indexOf("@");
+    return value.substring(index);
+  }
 
   return { navigateToUser };
 };

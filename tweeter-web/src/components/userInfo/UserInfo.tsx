@@ -67,7 +67,8 @@ const UserInfo = (props: Props) => {
     authToken: AuthToken,
     displayedUser: User
   ) => {
-    presenter.followDisplayedUser(event, authToken, displayedUser);
+    event.preventDefault();
+    presenter.followDisplayedUser(authToken, displayedUser);
   };
 
   const unfollowDisplayedUser = async (
@@ -75,7 +76,8 @@ const UserInfo = (props: Props) => {
     authToken: AuthToken,
     displayedUser: User
   ) => {
-    presenter.unfollowDisplayedUser(event, authToken, displayedUser);
+    event.preventDefault();
+    presenter.unfollowDisplayedUser(authToken, displayedUser);
   };
 
   const listener: UserInfoView = {
