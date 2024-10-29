@@ -24,12 +24,11 @@ export class PostStatusPresenter extends InfoPresenter<StatusService, PostStatus
   ) {
     await this.doFailureReportingOperation(async () => {
       this.view.setIsLoading(true);
-      this.view.displayInfoMessage("Posting status...", 0);
 
       const status = new Status(post, currentUser!, Date.now());
-
       await this.service.postStatus(authToken!, status);
-
+      
+      this.view.displayInfoMessage("Posting status...", 0);
       this.view.setPost("");
       this.view.displayInfoMessage("Status posted!", 2000);
     }, "post the status");
