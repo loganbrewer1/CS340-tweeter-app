@@ -8,7 +8,10 @@ import {
   UserItemView,
   UserItemPresenter,
 } from "../../presenters/UserItemPresenter";
-import { PagedItemPresenter, PagedItemView } from "../../presenters/PagedItemPresenter";
+import {
+  PagedItemPresenter,
+  PagedItemView,
+} from "../../presenters/PagedItemPresenter";
 import { UserService } from "../../model/service/UserService";
 import StatusService from "../../model/service/StatusService";
 
@@ -17,7 +20,7 @@ interface Props<T, U> {
   itemComponentGenerator: (item: T) => JSX.Element;
 }
 
-const ItemScroller = <T,U> (props: Props<T,U>) => {
+const ItemScroller = <T, U>(props: Props<T, U>) => {
   const { displayErrorMessage } = useToastListener();
   const [items, setItems] = useState<T[]>([]);
   const [newItems, setNewItems] = useState<T[]>([]);
