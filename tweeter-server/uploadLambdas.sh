@@ -5,7 +5,7 @@ set -e
 
 source .server
 
-aws s3 cp dist.zip s3://$BUCKET/code/lambdalist.zip
+aws s3 cp dist.zip s3://$BUCKET/code/lambdalist.zip --profile personal
 
 # using -e let's us use escape characters such as \n if the output is in quotation marks
 echo -e '\n\n\nlambdalist.zip uploaded to the bucket. Updating or creating lambda functions...\n'
@@ -21,12 +21,13 @@ do
     function_name=$(echo "$lambda_info" | cut -d '|' -f 1 | tr -d '[:space:]')
     handler=$(echo "$lambda_info" | cut -d '|' -f 2 | tr -d '[:space:]')
 
-    if aws lambda get-function --function-name "$function_name" &>/dev/null; then
+    if aws lambda get-function --function-name "$function_name" --profile personal &>/dev/null; then
         # Lambda exists, update code
         aws lambda update-function-code \
             --function-name  "$function_name" \
             --s3-bucket $BUCKET \
             --s3-key code/lambdalist.zip \
+            --profile personal \
             1>>/dev/null \
             &
         echo lambda $i, "$function_name", updating from s3
@@ -38,6 +39,7 @@ do
             --role $LAMBDA_ROLE \
             --handler "$handler" \
             --code S3Bucket=$BUCKET,S3Key=code/lambdalist.zip \
+            --profile personal \
             1>>/dev/null \
             &
         echo lambda $i, "$function_name", created from s3

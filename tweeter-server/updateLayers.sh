@@ -19,7 +19,7 @@ do
         continue
     fi
 
-    aws lambda update-function-configuration --function-name "$function_name" --layer "$LAMBDALAYER_ARN" 1>>/dev/null & 
+    aws lambda update-function-configuration --function-name "$function_name" --layer "$LAMBDALAYER_ARN" --profile personal 1>>/dev/null & 
     echo lambda $i, $function_name, updating lambda layer...
     pids[${i-1}]=$!
     ((i=i+1))
