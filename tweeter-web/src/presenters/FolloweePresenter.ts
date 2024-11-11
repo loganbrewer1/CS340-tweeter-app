@@ -1,4 +1,4 @@
-import { AuthToken, User } from "tweeter-shared";
+import { AuthToken, PagedUserItemRequest, User } from "tweeter-shared";
 import { UserItemPresenter } from "./UserItemPresenter";
 import { PAGE_SIZE } from "./PagedItemPresenter";
 
@@ -7,12 +7,16 @@ export class FolloweePresenter extends UserItemPresenter {
     authToken: AuthToken,
     user: string
   ): Promise<[User[], boolean]> {
-    return this.service.loadMoreFollowees(
-      authToken,
-      user,
-      PAGE_SIZE,
-      this.lastItem
-    );
+    const lastItemDto = this.lastItem ? this.lastItem.dto : null;
+    
+    const request: PagedUserItemRequest = {
+      token: authToken.token,
+      userAlias: user,
+      pageSize: PAGE_SIZE,
+      lastItem: lastItemDto
+    };
+
+    return this.service.loadMoreFollowees(request);
   }
 
   protected getItemDescription(): string {
