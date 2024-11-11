@@ -1,13 +1,13 @@
 export interface StatusDto {
-  post: string;
-  user: {
+  readonly post: string;
+  readonly user: {
     firstName: string;
     lastName: string;
     alias: string;
     imageUrl: string;
   };
-  timestamp: number; 
-  segments: {
+  readonly timestamp: number; 
+  readonly segments: {
     text: string;
     startPosition: number;
     endPosition: number;

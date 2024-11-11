@@ -3,7 +3,9 @@ import {
   PagedStatusItemResponse,
   PagedUserItemRequest,
   PagedUserItemResponse,
+  PostStatusRequest,
   Status,
+  TweeterResponse,
   User,
   UserDto,
 } from "tweeter-shared";
@@ -59,7 +61,7 @@ export class ServerFacade {
     // Handle errors
     if (response.success) {
       if (items == null) {
-        throw new Error(`No followees found`);
+        throw new Error(`No followers found`);
       } else {
         return [items, response.hasMore];
       }
@@ -77,16 +79,14 @@ export class ServerFacade {
       PagedStatusItemResponse
     >(request, "/feed/list");
 
-    // Convert the StatusDto array returned by ClientCommunicator to a User array
     const items: Status[] | null =
       response.success && response.items
         ? response.items.map((dto) => Status.fromDto(dto) as Status)
         : null;
 
-    // Handle errors
     if (response.success) {
       if (items == null) {
-        throw new Error(`No followees found`);
+        throw new Error(`No feed items found`);
       } else {
         return [items, response.hasMore];
       }
@@ -104,19 +104,34 @@ export class ServerFacade {
       PagedStatusItemResponse
     >(request, "/story/list");
 
-    // Convert the StatusDto array returned by ClientCommunicator to a User array
     const items: Status[] | null =
       response.success && response.items
         ? response.items.map((dto) => Status.fromDto(dto) as Status)
         : null;
 
-    // Handle errors
     if (response.success) {
       if (items == null) {
-        throw new Error(`No followees found`);
+        throw new Error(`No stories found`);
       } else {
         return [items, response.hasMore];
       }
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "An unknown error occurred");
+    }
+  }
+
+  public async postStatus(
+    request: PostStatusRequest
+  ): Promise<void> {
+    const response = await this.clientCommunicator.doPost<
+      PostStatusRequest,
+      TweeterResponse
+    >(request, "/status/post");
+
+    // Handle errors
+    if (response.success) {
+      return;
     } else {
       console.error(response);
       throw new Error(response.message ?? "An unknown error occurred");
