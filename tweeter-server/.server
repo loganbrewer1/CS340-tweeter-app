@@ -3,5 +3,7 @@ LAMBDA_ROLE='arn:aws:iam::011528258727:role/ServerScriptsRole'
 EDIT_LAMBDALIST='
 tweeterGetFollowees | lambda/follow/GetFolloweesLambda.handler
 tweeterGetFollowers | lambda/follow/GetFollowersLambda.handler
+tweeterGetStoryItems | lambda/status/GetFeedItemsLambda.handler
+tweeterGetFeedItems | lambda/status/GetStoryItemsLambda.handler
 '
-LAMBDALAYER_ARN='arn:aws:lambda:us-west-2:011528258727:layer:tweeterLambdaLayer:5'
+LAMBDALAYER_ARN='arn:aws:lambda:us-west-2:011528258727:layer:tweeterLambdaLayer:6'
