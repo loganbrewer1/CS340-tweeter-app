@@ -66,13 +66,10 @@ export class FollowService {
   }
 
   public async loadMoreFollowers(
-    authToken: AuthToken,
-    userAlias: string,
-    pageSize: number,
-    lastItem: User | null
+    requestObject: PagedUserItemRequest
   ): Promise<[User[], boolean]> {
     // TODO: Replace with the result of calling server
-    return FakeData.instance.getPageOfUsers(lastItem, pageSize, userAlias);
+    return this.serverFacade.getMoreFollowers(requestObject);
   }
 
   public async loadMoreFollowees(
