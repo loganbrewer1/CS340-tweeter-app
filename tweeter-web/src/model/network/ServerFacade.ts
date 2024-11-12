@@ -1,4 +1,5 @@
 import {
+  FollowChangeResponse,
   FollowRelatedRequest,
   GetCountResponse,
   PagedStatusItemRequest,
@@ -138,7 +139,9 @@ export class ServerFacade {
     }
   }
 
-  public async getFolloweeCount(request: FollowRelatedRequest): Promise<number> {
+  public async getFolloweeCount(
+    request: FollowRelatedRequest
+  ): Promise<number> {
     const response = await this.clientCommunicator.doPost<
       FollowRelatedRequest,
       GetCountResponse
@@ -153,7 +156,9 @@ export class ServerFacade {
     }
   }
 
-  public async getFollowerCount(request: FollowRelatedRequest): Promise<number> {
+  public async getFollowerCount(
+    request: FollowRelatedRequest
+  ): Promise<number> {
     const response = await this.clientCommunicator.doPost<
       FollowRelatedRequest,
       GetCountResponse
@@ -162,6 +167,40 @@ export class ServerFacade {
     // Handle errors
     if (response.success) {
       return response.count;
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "An unknown error occurred");
+    }
+  }
+
+  public async follow(
+    request: FollowRelatedRequest
+  ): Promise<[followerCount: number, followeeCount: number]> {
+    const response = await this.clientCommunicator.doPost<
+      FollowRelatedRequest,
+      FollowChangeResponse
+    >(request, "/follow/change");
+
+    // Handle errors
+    if (response.success) {
+      return [response.followerCount, response.followeeCount];
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "An unknown error occurred");
+    }
+  }
+
+  public async unfollow(
+    request: FollowRelatedRequest
+  ): Promise<[followerCount: number, followeeCount: number]> {
+    const response = await this.clientCommunicator.doPost<
+      FollowRelatedRequest,
+      FollowChangeResponse
+    >(request, "/unfollow/change");
+
+    // Handle errors
+    if (response.success) {
+      return [response.followerCount, response.followeeCount];
     } else {
       console.error(response);
       throw new Error(response.message ?? "An unknown error occurred");

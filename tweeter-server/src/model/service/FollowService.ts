@@ -10,17 +10,11 @@ export class FollowService {
     return FakeData.instance.isFollower();
   }
 
-  public async getFolloweeCount(
-    token: string,
-    user: UserDto
-  ): Promise<number> {
+  public async getFolloweeCount(token: string, user: UserDto): Promise<number> {
     return FakeData.instance.getFolloweeCount(user.alias);
   }
 
-  public async getFollowerCount(
-    token: string,
-    user: UserDto
-  ): Promise<number> {
+  public async getFollowerCount(token: string, user: UserDto): Promise<number> {
     return FakeData.instance.getFollowerCount(user.alias);
   }
 
@@ -48,14 +42,8 @@ export class FollowService {
 
     // TODO: Call the server
 
-    const followerCount = await this.getFollowerCount(
-      token,
-      userToUnfollow
-    );
-    const followeeCount = await this.getFolloweeCount(
-      token,
-      userToUnfollow
-    );
+    const followerCount = await this.getFollowerCount(token, userToUnfollow);
+    const followeeCount = await this.getFolloweeCount(token, userToUnfollow);
 
     return [followerCount, followeeCount];
   }

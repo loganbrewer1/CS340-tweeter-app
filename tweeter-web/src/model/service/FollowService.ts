@@ -28,42 +28,24 @@ export class FollowService {
   public async follow(
     requestObject: FollowRelatedRequest
   ): Promise<[followerCount: number, followeeCount: number]> {
-    // Pause so we can see the follow message. Remove when connected to the server
-    await new Promise((f) => setTimeout(f, 2000));
-
-    // TODO: Call the server
-
-    const followerCount = await this.getFollowerCount(requestObject);
-    const followeeCount = await this.getFolloweeCount(requestObject);
-
-    return [followerCount, followeeCount];
+    return this.serverFacade.follow(requestObject);
   }
 
   public async unfollow(
     requestObject: FollowRelatedRequest
   ): Promise<[followerCount: number, followeeCount: number]> {
-    // Pause so we can see the unfollow message. Remove when connected to the server
-    await new Promise((f) => setTimeout(f, 2000));
-
-    // TODO: Call the server
-
-    const followerCount = await this.getFollowerCount(requestObject);
-    const followeeCount = await this.getFolloweeCount(requestObject);
-
-    return [followerCount, followeeCount];
+    return this.serverFacade.unfollow(requestObject)
   }
 
   public async loadMoreFollowers(
     requestObject: PagedUserItemRequest
   ): Promise<[User[], boolean]> {
-    // TODO: Replace with the result of calling server
     return this.serverFacade.getMoreFollowers(requestObject);
   }
 
   public async loadMoreFollowees(
     requestObject: PagedUserItemRequest
   ): Promise<[User[], boolean]> {
-    // TODO: Replace with the result of calling server
     return this.serverFacade.getMoreFollowees(requestObject);
   }
 }
