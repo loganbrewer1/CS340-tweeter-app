@@ -1,4 +1,6 @@
 import {
+  FollowRelatedRequest,
+  GetCountResponse,
   PagedStatusItemRequest,
   PagedStatusItemResponse,
   PagedUserItemRequest,
@@ -121,9 +123,7 @@ export class ServerFacade {
     }
   }
 
-  public async postStatus(
-    request: PostStatusRequest
-  ): Promise<void> {
+  public async postStatus(request: PostStatusRequest): Promise<void> {
     const response = await this.clientCommunicator.doPost<
       PostStatusRequest,
       TweeterResponse
@@ -132,6 +132,36 @@ export class ServerFacade {
     // Handle errors
     if (response.success) {
       return;
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "An unknown error occurred");
+    }
+  }
+
+  public async getFolloweeCount(request: FollowRelatedRequest): Promise<number> {
+    const response = await this.clientCommunicator.doPost<
+      FollowRelatedRequest,
+      GetCountResponse
+    >(request, "/followee/count");
+
+    // Handle errors
+    if (response.success) {
+      return response.count;
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "An unknown error occurred");
+    }
+  }
+
+  public async getFollowerCount(request: FollowRelatedRequest): Promise<number> {
+    const response = await this.clientCommunicator.doPost<
+      FollowRelatedRequest,
+      GetCountResponse
+    >(request, "/follower/count");
+
+    // Handle errors
+    if (response.success) {
+      return response.count;
     } else {
       console.error(response);
       throw new Error(response.message ?? "An unknown error occurred");

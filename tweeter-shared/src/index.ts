@@ -23,6 +23,7 @@ export type { PagedUserItemRequest } from "./model/net/request/PagedUserItemRequ
 export type { PagedStatusItemRequest } from "./model/net/request/PagedStatusItemRequest";
 export type { TweeterRequest } from "./model/net/request/TweeterRequest"
 export type { PostStatusRequest } from "./model/net/request/PostStatusRequest"
+export type { FollowRelatedRequest } from "./model/net/request/FollowRelatedRequest";
 
 //
 // Response
@@ -30,6 +31,7 @@ export type { PostStatusRequest } from "./model/net/request/PostStatusRequest"
 export type { PagedUserItemResponse } from "./model/net/response/PagedUserItemResponse"
 export type { PagedStatusItemResponse } from "./model/net/response/PagedStatusItemResponse";
 export type { TweeterResponse } from "./model/net/response/TweeterResponse"
+export type { GetCountResponse } from "./model/net/response/GetCountResponse";
 
 //
 // Other

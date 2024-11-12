@@ -1,4 +1,4 @@
-import { AuthToken, User } from "tweeter-shared";
+import { AuthToken, FollowRelatedRequest, User } from "tweeter-shared";
 import FollowService from "../model/service/FollowService";
 import { InfoPresenter, InfoView } from "./InfoPresenter";
 
@@ -43,17 +43,21 @@ export class UserInfoPresenter extends InfoPresenter<
 
   setNumbFollowees = async (authToken: AuthToken, displayedUser: User) => {
     await this.doFailureReportingOperation(async () => {
-      this.view.setFolloweeCount(
-        await this.service.getFolloweeCount(authToken, displayedUser)
-      );
+      const request: FollowRelatedRequest = {
+        token: authToken.token,
+        user: displayedUser.dto,
+      };
+      this.view.setFolloweeCount(await this.service.getFolloweeCount(request));
     }, "get followees count");
   };
 
   setNumbFollowers = async (authToken: AuthToken, displayedUser: User) => {
     await this.doFailureReportingOperation(async () => {
-      this.view.setFollowerCount(
-        await this.service.getFollowerCount(authToken, displayedUser)
-      );
+      const request: FollowRelatedRequest = {
+        token: authToken.token,
+        user: displayedUser.dto,
+      };
+      this.view.setFollowerCount(await this.service.getFollowerCount(request));
     }, "get followers count");
   };
 
@@ -65,10 +69,12 @@ export class UserInfoPresenter extends InfoPresenter<
       this.view.setIsLoading(true);
       this.view.displayInfoMessage(`Following ${displayedUser!.name}...`, 0);
 
-      const [followerCount, followeeCount] = await this.service.follow(
-        authToken!,
-        displayedUser!
-      );
+      const request: FollowRelatedRequest = {
+        token: authToken.token,
+        user: displayedUser.dto,
+      };
+
+      const [followerCount, followeeCount] = await this.service.follow(request);
 
       this.view.setIsFollower(true);
       this.view.setFollowerCount(followerCount);
@@ -86,9 +92,13 @@ export class UserInfoPresenter extends InfoPresenter<
       this.view.setIsLoading(true);
       this.view.displayInfoMessage(`Unfollowing ${displayedUser!.name}...`, 0);
 
+      const request: FollowRelatedRequest = {
+        token: authToken.token,
+        user: displayedUser.dto,
+      };
+
       const [followerCount, followeeCount] = await this.service.unfollow(
-        authToken!,
-        displayedUser!
+        request
       );
 
       this.view.setIsFollower(false);

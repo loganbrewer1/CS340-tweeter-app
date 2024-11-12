@@ -33,7 +33,6 @@ export class StatusService {
     lastItem: StatusDto | null,
     pageSize: number
   ): Promise<[StatusDto[], boolean]> {
-    console.log('Reached Status Service...')
     const [items, hasMore] = FakeData.instance.getPageOfStatuses(
       Status.fromDto(lastItem),
       pageSize
