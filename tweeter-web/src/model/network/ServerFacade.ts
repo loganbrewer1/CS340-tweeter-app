@@ -2,6 +2,8 @@ import {
   FollowChangeResponse,
   FollowRelatedRequest,
   GetCountResponse,
+  IsFollowerRequest,
+  IsFollowerResponse,
   PagedStatusItemRequest,
   PagedStatusItemResponse,
   PagedUserItemRequest,
@@ -201,6 +203,23 @@ export class ServerFacade {
     // Handle errors
     if (response.success) {
       return [response.followerCount, response.followeeCount];
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "An unknown error occurred");
+    }
+  }
+
+  public async isFollowerStatus(
+    request: IsFollowerRequest
+  ): Promise<boolean> {
+    const response = await this.clientCommunicator.doPost<
+      IsFollowerRequest,
+      IsFollowerResponse
+    >(request, "/followStatus/list");
+
+    // Handle errors
+    if (response.success) {
+      return response.isFollower;
     } else {
       console.error(response);
       throw new Error(response.message ?? "An unknown error occurred");

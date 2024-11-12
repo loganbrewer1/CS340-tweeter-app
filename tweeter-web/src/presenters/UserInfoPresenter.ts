@@ -1,4 +1,9 @@
-import { AuthToken, FollowRelatedRequest, User } from "tweeter-shared";
+import {
+  AuthToken,
+  FollowRelatedRequest,
+  IsFollowerRequest,
+  User,
+} from "tweeter-shared";
 import FollowService from "../model/service/FollowService";
 import { InfoPresenter, InfoView } from "./InfoPresenter";
 
@@ -30,12 +35,14 @@ export class UserInfoPresenter extends InfoPresenter<
       if (currentUser === displayedUser) {
         this.view.setIsFollower(false);
       } else {
+        const request: IsFollowerRequest = {
+          token: authToken.token,
+          user: currentUser.dto,
+          selectedUser: displayedUser.dto,
+        };
+
         this.view.setIsFollower(
-          await this.service.getIsFollowerStatus(
-            authToken!,
-            currentUser!,
-            displayedUser!
-          )
+          await this.service.getIsFollowerStatus(request)
         );
       }
     }, "determine follower status");
