@@ -6,5 +6,10 @@ tweeterGetFollowers | lambda/follow/GetFollowersLambda.handler
 tweeterGetStoryItems | lambda/status/GetFeedItemsLambda.handler
 tweeterGetFeedItems | lambda/status/GetStoryItemsLambda.handler
 tweeterPostStatus | lambda/status/PostStatusLambda.handler
+tweeterFollow | lambda/follow/FollowLambda.handler
+tweeterUnfollow | lambda/follow/UnfollowLambda.handler
+tweeterGetFolloweesCount | lambda/follow/GetFolloweesCountLambda.handler
+tweeterGetFollowersCount | lambda/follow/GetFollowersCountLambda.handler
+tweeterGetIsFollower | lambda/follow/GetIsFollowerLambda.handler
 '
-LAMBDALAYER_ARN='arn:aws:lambda:us-west-2:011528258727:layer:tweeterLambdaLayer:6'
+LAMBDALAYER_ARN='arn:aws:lambda:us-west-2:011528258727:layer:tweeterLambdaLayer:7'
