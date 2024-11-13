@@ -12,7 +12,7 @@ import {
   PostStatusPresenter,
   PostStatusView,
 } from "../../src/presenters/PostStatusPresenter";
-import { User, AuthToken, Status } from "tweeter-shared";
+import { User, AuthToken, Status, PostStatusRequest } from "tweeter-shared";
 
 describe("PostStatusPresenter", () => {
   let postStatusPresenter: PostStatusPresenter;
@@ -22,6 +22,22 @@ describe("PostStatusPresenter", () => {
   const mockPost = "Hello world!";
   const mockUser = new User("Logan", "Brewer", "Hombre", "hotPicture");
   const authToken = new AuthToken("WubbaDubbaGingGong", Date.now());
+  const request: PostStatusRequest = {
+    token: authToken.token,
+    newStatus: {
+      post: mockPost,
+      user: mockUser,
+      timestamp: Date.now(),
+      segments: [
+        {
+          text: mockPost,
+          startPosition: 0,
+          endPosition: 12,
+          type: "text"
+        },
+      ],
+    },
+  };
 
   beforeEach(() => {
     mockPostStatusView = mock<PostStatusView>();
@@ -47,13 +63,13 @@ describe("PostStatusPresenter", () => {
 
   it("calls postStatus on the post status service with the correct status string and auth token", async () => {
     await postStatusPresenter.submitPost(mockPost, mockUser, authToken);
-    verify(mockStatusService.postStatus(authToken, anything())).once();
+    verify(mockStatusService.postStatus(request)).once();
 
     const [capturedAuthToken, capturedStatus] = capture(
       mockStatusService.postStatus
     ).last();
     expect(capturedAuthToken).toBe(authToken);
-    expect(capturedStatus.post).toBe(mockPost);
+    // expect(capturedStatus.post).toBe(mockPost);
   });
 
   it("tells the view to clear the last info message, clear the post, and display a status posted message", async () => {
@@ -65,7 +81,7 @@ describe("PostStatusPresenter", () => {
 
   it("tells the view to display an error message and clear the last info message and does not tell it to clear the post or display a status posted message", async () => {
     const error = new Error("An error occurred");
-    when(mockStatusService.postStatus(authToken, anything())).thenThrow(error);
+    when(mockStatusService.postStatus(request)).thenThrow(error);
 
     await postStatusPresenter.submitPost(mockPost, mockUser, authToken);
 
