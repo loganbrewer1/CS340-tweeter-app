@@ -1,3 +1,4 @@
+import { LoginRequest } from "tweeter-shared";
 import { AuthPresenter, AuthView } from "./AuthPresenter";
 
 export interface LoginView extends AuthView {
@@ -18,8 +19,14 @@ export class LoginPresenter extends AuthPresenter<LoginView> {
       pathToSend = "/";
     }
 
+    const request: LoginRequest = {
+      alias: alias,
+      password: password,
+      token: ""
+    };
+
     await this.handleAuthAction(
-      () => this.userService.login(alias, password),
+      () => this.userService.login(request),
       rememberMe,
       "log user in",
       pathToSend

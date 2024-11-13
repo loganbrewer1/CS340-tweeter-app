@@ -1,5 +1,4 @@
-import { Buffer } from "buffer";
-import { AuthToken, User, FakeData, GetUserRequest, TweeterRequest, LoginRequest } from "tweeter-shared";
+import { AuthToken, User, GetUserRequest, TweeterRequest, LoginRequest, RegisterRequest } from "tweeter-shared";
 import { ServerFacade } from "../network/ServerFacade";
 
 export class UserService {
@@ -12,30 +11,14 @@ export class UserService {
   }
 
   public async register(
-    firstName: string,
-    lastName: string,
-    alias: string,
-    password: string,
-    userImageBytes: Uint8Array,
-    imageFileExtension: string
+    requestObject: RegisterRequest 
   ): Promise<[User, AuthToken]> {
-    // Not neded now, but will be needed when you make the request to the server in milestone 3
-    const imageStringBase64: string =
-      Buffer.from(userImageBytes).toString("base64");
-
-    // TODO: Replace with the result of calling the server
-    const user = FakeData.instance.firstUser;
-
-    if (user === null) {
-      throw new Error("Invalid registration");
-    }
-
-    return [user, FakeData.instance.authToken];
+    return this.serverFacade.register(requestObject)
   }
 
   login = async (
     requestObject: LoginRequest
-  ): Promise<[User, string]> => {
+  ): Promise<[User, AuthToken]> => {
     return this.serverFacade.login(requestObject)
   };
 

@@ -27,6 +27,7 @@ export type { FollowRelatedRequest } from "./model/net/request/FollowRelatedRequ
 export type { IsFollowerRequest } from "./model/net/request/IsFollowerRequest"
 export type { GetUserRequest } from "./model/net/request/GetUserRequest"
 export type { LoginRequest } from "./model/net/request/LoginRequest"
+export type { RegisterRequest } from "./model/net/request/RegisterRequest"
 
 //
 // Response

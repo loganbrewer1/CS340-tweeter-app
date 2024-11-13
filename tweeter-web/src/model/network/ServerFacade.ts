@@ -14,11 +14,11 @@ import {
   PagedUserItemRequest,
   PagedUserItemResponse,
   PostStatusRequest,
+  RegisterRequest,
   Status,
   TweeterRequest,
   TweeterResponse,
-  User,
-  UserDto,
+  User
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 
@@ -247,21 +247,44 @@ export class ServerFacade {
     }
   }
 
-  public async login(request: LoginRequest): Promise<[User, string]> {
+  public async register(request: RegisterRequest): Promise<[User, AuthToken]> {
+    const response = await this.clientCommunicator.doPost<
+      RegisterRequest,
+      LoginResponse
+    >(request, "/user/register");
+
+    const user: User | null = User.fromDto(response.user);
+    const authToken: AuthToken = new AuthToken(response.token, Date.now());
+
+    // Handle errors
+    if (response.success) {
+      if (user == null) {
+        console.error("User does not exist");
+        throw new Error();
+      }
+      return [user, authToken];
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "An unknown error occurred");
+    }
+  }
+
+  public async login(request: LoginRequest): Promise<[User, AuthToken]> {
     const response = await this.clientCommunicator.doPost<
       LoginRequest,
       LoginResponse
     >(request, "/user/login");
 
-    const user: User | null = User.fromDto(response.user)
+    const user: User | null = User.fromDto(response.user);
+    const authToken: AuthToken = new AuthToken(response.token, Date.now());
 
     // Handle errors
     if (response.success) {
       if (user == null) {
-        console.error("User does not exist")
+        console.error("User does not exist");
         throw new Error();
       }
-      return [user, response.token]
+      return [user, authToken];
     } else {
       console.error(response);
       throw new Error(response.message ?? "An unknown error occurred");

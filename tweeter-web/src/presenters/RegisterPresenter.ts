@@ -1,6 +1,7 @@
 import { Buffer } from "buffer";
 import { ChangeEvent } from "react";
 import { AuthPresenter, AuthView } from "./AuthPresenter";
+import { RegisterRequest } from "tweeter-shared";
 
 export interface RegisterView extends AuthView {
   setImageBytes: (bytes: Uint8Array) => void;
@@ -63,16 +64,21 @@ export class RegisterPresenter extends AuthPresenter<RegisterView> {
     imageFileExtension: string,
     rememberMe: boolean
   ) {
+    const imageStringBase64: string =
+      Buffer.from(imageBytes).toString("base64");
+
+    const request: RegisterRequest = {
+      firstName,
+      lastName,
+      alias,
+      password,
+      userImageBytes: imageStringBase64,
+      imageFileExtension,
+      token: "",
+    };
+
     await this.handleAuthAction(
-      () =>
-        this.userService.register(
-          firstName,
-          lastName,
-          alias,
-          password,
-          imageBytes,
-          imageFileExtension
-        ),
+      () => this.userService.register(request),
       rememberMe,
       "register user",
       "/"
