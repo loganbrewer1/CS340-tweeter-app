@@ -35,7 +35,6 @@ export class UserService {
     alias: string,
     password: string
   ): Promise<[User, AuthToken]> => {
-    // TODO: Replace with the result of calling the server
     const user = FakeData.instance.firstUser;
 
     if (user === null) {
@@ -45,8 +44,7 @@ export class UserService {
     return [user, FakeData.instance.authToken];
   };
 
-  logout = async (authToken: AuthToken): Promise<void> => {
-    // Pause so we can see the logging out message. Delete when the call to the server is implemented.
+  logout = async (token: string): Promise<void> => {
     await new Promise((res) => setTimeout(res, 1000));
   };
 }
