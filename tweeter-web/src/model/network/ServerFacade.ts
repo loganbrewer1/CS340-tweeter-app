@@ -1,15 +1,21 @@
 import {
+  AuthToken,
   FollowChangeResponse,
   FollowRelatedRequest,
   GetCountResponse,
+  GetUserRequest,
+  GetUserResponse,
   IsFollowerRequest,
   IsFollowerResponse,
+  LoginRequest,
+  LoginResponse,
   PagedStatusItemRequest,
   PagedStatusItemResponse,
   PagedUserItemRequest,
   PagedUserItemResponse,
   PostStatusRequest,
   Status,
+  TweeterRequest,
   TweeterResponse,
   User,
   UserDto,
@@ -209,9 +215,7 @@ export class ServerFacade {
     }
   }
 
-  public async isFollowerStatus(
-    request: IsFollowerRequest
-  ): Promise<boolean> {
+  public async isFollowerStatus(request: IsFollowerRequest): Promise<boolean> {
     const response = await this.clientCommunicator.doPost<
       IsFollowerRequest,
       IsFollowerResponse
@@ -220,6 +224,59 @@ export class ServerFacade {
     // Handle errors
     if (response.success) {
       return response.isFollower;
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "An unknown error occurred");
+    }
+  }
+
+  public async getUser(request: GetUserRequest): Promise<User | null> {
+    const response = await this.clientCommunicator.doPost<
+      GetUserRequest,
+      GetUserResponse
+    >(request, "/user/list");
+
+    const user: User | null = User.fromDto(response.user);
+
+    // Handle errors
+    if (response.success) {
+      return user;
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "An unknown error occurred");
+    }
+  }
+
+  public async login(request: LoginRequest): Promise<[User, string]> {
+    const response = await this.clientCommunicator.doPost<
+      LoginRequest,
+      LoginResponse
+    >(request, "/user/login");
+
+    const user: User | null = User.fromDto(response.user)
+
+    // Handle errors
+    if (response.success) {
+      if (user == null) {
+        console.error("User does not exist")
+        throw new Error();
+      }
+      return [user, response.token]
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? "An unknown error occurred");
+    }
+  }
+
+  public async logout(request: TweeterRequest): Promise<void> {
+    const response = await this.clientCommunicator.doPost<
+      TweeterRequest,
+      TweeterResponse
+    >(request, "/user/logout");
+
+    // Handle errors
+    if (response.success) {
+      return;
     } else {
       console.error(response);
       throw new Error(response.message ?? "An unknown error occurred");

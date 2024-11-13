@@ -25,6 +25,8 @@ export type { TweeterRequest } from "./model/net/request/TweeterRequest";
 export type { PostStatusRequest } from "./model/net/request/PostStatusRequest";
 export type { FollowRelatedRequest } from "./model/net/request/FollowRelatedRequest";
 export type { IsFollowerRequest } from "./model/net/request/IsFollowerRequest"
+export type { GetUserRequest } from "./model/net/request/GetUserRequest"
+export type { LoginRequest } from "./model/net/request/LoginRequest"
 
 //
 // Response
@@ -35,6 +37,8 @@ export type { TweeterResponse } from "./model/net/response/TweeterResponse";
 export type { GetCountResponse } from "./model/net/response/GetCountResponse";
 export type { FollowChangeResponse } from "./model/net/response/FollowChangeResponse"
 export type { IsFollowerResponse } from "./model/net/response/IsFollowerResponse"
+export type { GetUserResponse } from "./model/net/response/GetUserResponse"
+export type { LoginResponse } from "./model/net/response/LoginResponse"
 
 //
 // Other

@@ -1,4 +1,4 @@
-import { AuthToken } from "tweeter-shared";
+import { AuthToken, TweeterRequest } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
 import { InfoPresenter, InfoView } from "./InfoPresenter";
 
@@ -21,7 +21,10 @@ export class AppNavbarPresenter extends InfoPresenter<
   public async logOut(authToken: AuthToken) {
     this.view.displayInfoMessage("Logging Out...", 0);
     await this.doFailureReportingOperation(async () => {
-      await this.service.logout(authToken!);
+      const request: TweeterRequest = {
+        token: authToken!.token
+      };
+      await this.service.logout(request);
       this.view.clearLastInfoMessage();
       this.view.clearUserInfo();
     }, "log user out");
