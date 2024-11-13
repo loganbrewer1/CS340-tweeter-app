@@ -22,7 +22,7 @@ export class AppNavbarPresenter extends InfoPresenter<
     this.view.displayInfoMessage("Logging Out...", 0);
     await this.doFailureReportingOperation(async () => {
       const request: TweeterRequest = {
-        token: authToken!.token
+        token: authToken!.token,
       };
       await this.service.logout(request);
       this.view.clearLastInfoMessage();

@@ -6,7 +6,7 @@ export interface StatusDto {
     alias: string;
     imageUrl: string;
   };
-  readonly timestamp: number; 
+  readonly timestamp: number;
   readonly segments: {
     text: string;
     startPosition: number;

@@ -5,11 +5,15 @@ export const handler = async (
   request: IsFollowerRequest
 ): Promise<IsFollowerResponse> => {
   const followService = new FollowService();
-  const isFollower = await followService.getIsFollowerStatus(request.token, request.user, request.selectedUser)
+  const isFollower = await followService.getIsFollowerStatus(
+    request.token,
+    request.user,
+    request.selectedUser
+  );
 
   return {
     success: true,
     message: null,
-    isFollower: isFollower
+    isFollower: isFollower,
   };
 };

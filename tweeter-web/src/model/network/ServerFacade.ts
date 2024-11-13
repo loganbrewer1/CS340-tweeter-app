@@ -18,7 +18,7 @@ import {
   Status,
   TweeterRequest,
   TweeterResponse,
-  User
+  User,
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 

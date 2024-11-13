@@ -296,11 +296,7 @@ export class Status {
     const user = User.fromDto(dto.user);
     if (!user) return null;
 
-    const status = new Status(
-      dto.post,
-      user,
-      dto.timestamp
-    );
+    const status = new Status(dto.post, user, dto.timestamp);
 
     status.segments = dto.segments.map(
       (segment) =>

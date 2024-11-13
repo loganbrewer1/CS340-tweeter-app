@@ -5,11 +5,14 @@ export const handler = async (
   request: FollowRelatedRequest
 ): Promise<GetCountResponse> => {
   const followService = new FollowService();
-  const count = await followService.getFolloweeCount(request.token, request.user)
+  const count = await followService.getFolloweeCount(
+    request.token,
+    request.user
+  );
 
   return {
     success: true,
     message: null,
-    count: count
+    count: count,
   };
 };

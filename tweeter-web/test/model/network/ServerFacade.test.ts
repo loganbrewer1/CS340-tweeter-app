@@ -4,19 +4,18 @@ import {
   RegisterRequest,
   FollowRelatedRequest,
   PagedUserItemRequest,
-  User,
   AuthToken,
   UserDto,
 } from "tweeter-shared";
 
 describe("ServerFacade Integration Tests", () => {
   let facade: ServerFacade;
-  let testUser : UserDto = {
-    firstName: 'Bo',
-    lastName: 'Staff',
-    alias: 'skills',
-    imageUrl: 'HowToImpressAWoman'
-  }
+  let testUser: UserDto = {
+    firstName: "Bo",
+    lastName: "Staff",
+    alias: "skills",
+    imageUrl: "HowToImpressAWoman",
+  };
 
   beforeAll(() => {
     facade = new ServerFacade();
@@ -24,13 +23,13 @@ describe("ServerFacade Integration Tests", () => {
 
   test("Register user", async () => {
     const request: RegisterRequest = {
-        alias: "Please",
-        password: "Nerf",
-        firstName: "Darius",
-        lastName: "And",
-        userImageBytes: "Katarina",
-        imageFileExtension: "Buff",
-        token: "Bard"
+      alias: "Please",
+      password: "Nerf",
+      firstName: "Darius",
+      lastName: "And",
+      userImageBytes: "Katarina",
+      imageFileExtension: "Buff",
+      token: "Bard",
     };
     const [user, authToken] = await facade.register(request);
     expect(user).not.toBeNull();
@@ -39,8 +38,8 @@ describe("ServerFacade Integration Tests", () => {
 
   test("Get Follower Count", async () => {
     const request: FollowRelatedRequest = {
-        user: testUser,
-        token: "bilboBaggins"
+      user: testUser,
+      token: "bilboBaggins",
     };
     const count = await facade.getFollowerCount(request);
     expect(count).toBeGreaterThanOrEqual(1);

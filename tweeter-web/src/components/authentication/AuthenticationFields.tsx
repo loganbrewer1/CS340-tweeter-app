@@ -8,7 +8,7 @@ interface Props {
   password: string;
 }
 
-const AuthenticationFields = (props : Props) => {
+const AuthenticationFields = (props: Props) => {
   return (
     <>
       <div className="form-floating">

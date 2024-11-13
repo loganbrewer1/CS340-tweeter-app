@@ -12,10 +12,8 @@ import MainLayout from "./components/mainLayout/MainLayout";
 import Toaster from "./components/toaster/Toaster";
 import useUserInfo from "./components/userInfo/UserInfoHook";
 import { FolloweePresenter } from "./presenters/FolloweePresenter";
-import { UserItemView } from "./presenters/UserItemPresenter";
 import { FollowerPresenter } from "./presenters/FollowerPresenter";
 import { FeedPresenter } from "./presenters/FeedPresenter";
-import { StatusItemView } from "./presenters/StatusItemPresenter";
 import { StoryPresenter } from "./presenters/StoryPresenter";
 import {
   RegisterPresenter,
@@ -23,13 +21,9 @@ import {
 } from "./presenters/RegisterPresenter";
 import { LoginPresenter, LoginView } from "./presenters/LoginPresenter";
 import ItemScroller from "./components/mainLayout/ItemScroller";
-import {
-  PagedItemPresenter,
-  PagedItemView,
-} from "./presenters/PagedItemPresenter";
+import { PagedItemView } from "./presenters/PagedItemPresenter";
 import { Status, User } from "tweeter-shared";
 import UserItem from "./components/userItem/UserItem";
-import { UserService } from "./model/service/UserService";
 import StatusItem from "./components/statusItem/StatusItem";
 
 const App = () => {

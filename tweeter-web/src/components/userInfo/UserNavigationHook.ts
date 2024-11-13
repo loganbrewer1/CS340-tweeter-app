@@ -23,13 +23,12 @@ const useNavigateToUser = (
     event.preventDefault();
     const alias = extractAlias(event.target.toString());
     presenter.navigateToUser(authToken, currentUser, alias);
-    
   };
 
   const extractAlias = (value: string): string => {
     const index = value.indexOf("@");
     return value.substring(index);
-  }
+  };
 
   return { navigateToUser };
 };

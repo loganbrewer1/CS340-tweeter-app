@@ -8,12 +8,12 @@ export class FolloweePresenter extends UserItemPresenter {
     user: string
   ): Promise<[User[], boolean]> {
     const lastItemDto = this.lastItem ? this.lastItem.dto : null;
-    
+
     const request: PagedUserItemRequest = {
       token: authToken.token,
       userAlias: user,
       pageSize: PAGE_SIZE,
-      lastItem: lastItemDto
+      lastItem: lastItemDto,
     };
 
     return this.service.loadMoreFollowees(request);

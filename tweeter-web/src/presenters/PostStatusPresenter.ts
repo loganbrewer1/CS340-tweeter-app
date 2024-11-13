@@ -7,8 +7,10 @@ export interface PostStatusView extends InfoView {
   setIsLoading: (isLoading: boolean) => void;
 }
 
-export class PostStatusPresenter extends InfoPresenter<StatusService, PostStatusView> {
-
+export class PostStatusPresenter extends InfoPresenter<
+  StatusService,
+  PostStatusView
+> {
   public constructor(view: PostStatusView) {
     super(view);
   }
@@ -28,10 +30,10 @@ export class PostStatusPresenter extends InfoPresenter<StatusService, PostStatus
       const status = new Status(post, currentUser!, Date.now());
       const request: PostStatusRequest = {
         token: authToken.token,
-        newStatus: status.dto
-      }
+        newStatus: status.dto,
+      };
       await this.service.postStatus(request);
-      
+
       this.view.displayInfoMessage("Posting status...", 0);
       this.view.setPost("");
       this.view.displayInfoMessage("Status posted!", 2000);

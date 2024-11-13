@@ -14,6 +14,6 @@ export const handler = async (
     success: true,
     message: null,
     followeeCount: followeeCount,
-    followerCount: followerCount
+    followerCount: followerCount,
   };
 };

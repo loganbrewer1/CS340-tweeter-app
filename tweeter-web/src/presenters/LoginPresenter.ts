@@ -22,7 +22,7 @@ export class LoginPresenter extends AuthPresenter<LoginView> {
     const request: LoginRequest = {
       alias: alias,
       password: password,
-      token: ""
+      token: "",
     };
 
     await this.handleAuthAction(

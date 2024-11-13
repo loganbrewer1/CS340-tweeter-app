@@ -16,7 +16,7 @@ export class FeedPresenter extends StatusItemPresenter {
       lastItem: lastItemDto,
     };
 
-    return this.service.loadMoreFeedItems(request)
+    return this.service.loadMoreFeedItems(request);
   }
 
   protected getItemDescription(): string {

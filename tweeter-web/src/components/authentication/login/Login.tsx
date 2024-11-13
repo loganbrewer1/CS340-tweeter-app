@@ -32,18 +32,18 @@ const Login = (props: Props) => {
       doLogin();
     }
   };
-  
- const listener: LoginView = {
-   setIsLoading: setIsLoading,
-   navigate: navigate,
-   updateUserInfo: updateUserInfo,
-   displayErrorMessage: displayErrorMessage,
- };
 
- const [presenter] = useState(props.presenterGenerator(listener));
+  const listener: LoginView = {
+    setIsLoading: setIsLoading,
+    navigate: navigate,
+    updateUserInfo: updateUserInfo,
+    displayErrorMessage: displayErrorMessage,
+  };
+
+  const [presenter] = useState(props.presenterGenerator(listener));
 
   const doLogin = async () => {
-    presenter.doLogin(alias, password, rememberMe)
+    presenter.doLogin(alias, password, rememberMe);
   };
 
   const inputFieldGenerator = () => {

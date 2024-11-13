@@ -16,7 +16,7 @@ export class StatusService {
     pageSize: number,
     lastItem: StatusDto | null
   ): Promise<[StatusDto[], boolean]> {
-    return this.getFakeData(lastItem, pageSize)
+    return this.getFakeData(lastItem, pageSize);
   }
 
   public async postStatus(

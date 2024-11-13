@@ -1,5 +1,4 @@
 import {
-  AuthToken,
   Status,
   PagedStatusItemRequest,
   PostStatusRequest,
@@ -21,10 +20,8 @@ export class StatusService {
     return this.serverFacade.getMoreStoryItems(requestObject);
   }
 
-  public async postStatus(
-    requestObject: PostStatusRequest
-  ): Promise<void> {
-    return this.serverFacade.postStatus(requestObject)
+  public async postStatus(requestObject: PostStatusRequest): Promise<void> {
+    return this.serverFacade.postStatus(requestObject);
   }
 }
 

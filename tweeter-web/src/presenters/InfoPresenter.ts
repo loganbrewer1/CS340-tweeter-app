@@ -5,7 +5,10 @@ export interface InfoView extends View {
   clearLastInfoMessage: () => void;
 }
 
-export abstract class InfoPresenter<U, V extends InfoView> extends Presenter<V> {
+export abstract class InfoPresenter<
+  U,
+  V extends InfoView
+> extends Presenter<V> {
   private _service: U;
 
   constructor(view: V) {

@@ -33,7 +33,7 @@ describe("PostStatusPresenter", () => {
           text: mockPost,
           startPosition: 0,
           endPosition: 12,
-          type: "text"
+          type: "text",
         },
       ],
     },
