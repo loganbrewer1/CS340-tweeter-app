@@ -6,15 +6,19 @@ import {
   DeleteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { FollowDAO } from "../interfaces/FollowDAO";
 
-export class FollowDAO {
+export class FollowDynamoDAO implements FollowDAO {
   readonly tableName = "Follow";
   readonly pkAttr = "followerAlias";
   readonly skAttr = "followeeAlias";
 
   private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
-  async addFollow(followerAlias: string, followeeAlias: string): Promise<void> {
+  async followUser(
+    followerAlias: string,
+    followeeAlias: string
+  ): Promise<void> {
     const params = {
       TableName: this.tableName,
       Item: {
@@ -25,7 +29,7 @@ export class FollowDAO {
     await this.client.send(new PutCommand(params));
   }
 
-  async removeFollow(
+  async unfollowUser(
     followerAlias: string,
     followeeAlias: string
   ): Promise<void> {

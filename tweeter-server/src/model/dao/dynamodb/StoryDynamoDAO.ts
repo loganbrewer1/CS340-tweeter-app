@@ -6,8 +6,9 @@ import {
   DeleteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { StoryDAO } from "../interfaces/StoryDAO";
 
-export class StoryDAO {
+export class StoryDynamoDAO implements StoryDAO {
   readonly tableName = "Story";
   readonly pkAttr = "senderAlias";
   readonly skAttr = "date";
