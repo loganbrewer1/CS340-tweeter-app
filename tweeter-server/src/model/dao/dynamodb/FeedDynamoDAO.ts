@@ -5,7 +5,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { FeedDAO } from "../interfaces/FeedDAO";
-import { Status, StatusDto } from "tweeter-shared";
+import { StatusDto } from "tweeter-shared";
 import { FollowDynamoDAO } from "./FollowDynamoDAO";
 
 export class FeedDynamoDAO implements FeedDAO {
@@ -18,31 +18,27 @@ export class FeedDynamoDAO implements FeedDAO {
 
   async addStatusToFeeds(
     receiverAlias: string,
-    newStatus: Status
+    newStatusDto: StatusDto
   ): Promise<void> {
     const followers = await this.followDynamoDAO.getFollowers(receiverAlias);
 
     for (const follower of followers) {
-      const dateAndSenderAlias = `${newStatus.timestamp}#${newStatus.user.alias}`;
-      await this.addFeedItem(
-        follower,
-        dateAndSenderAlias,
-        newStatus.user.alias
-      );
+      const dateAndSenderAlias = `${newStatusDto.timestamp}#${newStatusDto.user.alias}`;
+      await this.addFeedItem(follower.alias, dateAndSenderAlias, newStatusDto);
     }
   }
 
   private async addFeedItem(
     receiverAlias: string,
     dateAndSenderAlias: string,
-    senderAlias: string
+    newStatusDto: StatusDto
   ): Promise<void> {
     const params = {
       TableName: this.tableName,
       Item: {
         [this.pkAttr]: receiverAlias,
         [this.skAttr]: dateAndSenderAlias,
-        senderAlias,
+        statusDto: newStatusDto,
       },
     };
     await this.client.send(new PutCommand(params));
@@ -52,7 +48,7 @@ export class FeedDynamoDAO implements FeedDAO {
     receiverAlias: string,
     lastItemTimestamp?: string,
     pageSize: number = 10
-  ): Promise<[Status[], boolean]> {
+  ): Promise<[StatusDto[], boolean]> {
     const params = {
       TableName: this.tableName,
       KeyConditionExpression: `${this.pkAttr} = :receiver`,
@@ -70,24 +66,10 @@ export class FeedDynamoDAO implements FeedDAO {
 
     const output = await this.client.send(new QueryCommand(params));
 
-    const statuses: Status[] =
-      (output.Items?.map((item) => {
-        const statusDto: StatusDto = {
-          post: item.post,
-          user: {
-            alias: receiverAlias,
-            imageUrl: item.imageUrl,
-            firstName: item.firstName,
-            lastName: item.lastName,
-          },
-          timestamp: item[this.skAttr]?.split("#")[0],
-          segments: item.segments || [],
-        };
-
-        return Status.fromDto(statusDto);
-      })! as Status[]) || [];
+    const statusDtos: StatusDto[] =
+      output.Items?.map((item) => item.statusDto) || [];
 
     const hasMorePages = output.LastEvaluatedKey !== undefined;
-    return [statuses, hasMorePages];
+    return [statusDtos, hasMorePages];
   }
 }

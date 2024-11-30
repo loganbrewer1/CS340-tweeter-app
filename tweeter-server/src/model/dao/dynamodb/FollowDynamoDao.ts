@@ -1,12 +1,13 @@
 import {
   DynamoDBDocumentClient,
-  GetCommand,
   PutCommand,
   QueryCommand,
   DeleteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { FollowDAO } from "../interfaces/FollowDAO";
+import UserDynamoDAO from "./UserDynamoDAO";
+import { UserDto } from "tweeter-shared";
 
 export class FollowDynamoDAO implements FollowDAO {
   readonly tableName = "Follow";
@@ -14,6 +15,7 @@ export class FollowDynamoDAO implements FollowDAO {
   readonly skAttr = "followeeAlias";
 
   private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
+  private readonly userDynamoDAO = new UserDynamoDAO();
 
   async followUser(
     followerAlias: string,
@@ -43,7 +45,7 @@ export class FollowDynamoDAO implements FollowDAO {
     await this.client.send(new DeleteCommand(params));
   }
 
-  async getFollowees(followerAlias: string): Promise<string[]> {
+  async getFollowees(followerAlias: string): Promise<UserDto[]> {
     const params = {
       TableName: this.tableName,
       KeyConditionExpression: `${this.pkAttr} = :follower`,
@@ -53,10 +55,16 @@ export class FollowDynamoDAO implements FollowDAO {
     };
 
     const output = await this.client.send(new QueryCommand(params));
-    return output.Items?.map((item) => item[this.skAttr]) || [];
+    const followeeAliases =
+      output.Items?.map((item) => item[this.skAttr]) || [];
+
+    const userDtos = await this.userDynamoDAO.getBatchUsersByAliases(
+      followeeAliases
+    );
+    return userDtos;
   }
 
-  async getFollowers(followeeAlias: string): Promise<string[]> {
+  async getFollowers(followeeAlias: string): Promise<UserDto[]> {
     const params = {
       TableName: this.tableName,
       IndexName: "followeeAliasIndex",
@@ -67,6 +75,12 @@ export class FollowDynamoDAO implements FollowDAO {
     };
 
     const output = await this.client.send(new QueryCommand(params));
-    return output.Items?.map((item) => item[this.pkAttr]) || [];
+    const followerAliases =
+      output.Items?.map((item) => item[this.pkAttr]) || [];
+
+    const userDtos = await this.userDynamoDAO.getBatchUsersByAliases(
+      followerAliases
+    );
+    return userDtos;
   }
 }

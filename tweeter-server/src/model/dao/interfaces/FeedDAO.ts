@@ -1,10 +1,10 @@
-import { Status } from "tweeter-shared";
+import { StatusDto } from "tweeter-shared";
 
 export interface FeedDAO {
-  addStatusToFeeds(receiverAlias: string, status: Status): Promise<void>;
+  addStatusToFeeds(receiverAlias: string, status: StatusDto): Promise<void>;
   getFeedForUser(
     receiverAlias: string,
     lastItemTimestamp?: string,
     pageSize?: number
-  ): Promise<[Status[], boolean]>;
+  ): Promise<[StatusDto[], boolean]>;
 }

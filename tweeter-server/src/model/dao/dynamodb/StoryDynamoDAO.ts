@@ -1,12 +1,11 @@
 import {
   DynamoDBDocumentClient,
-  GetCommand,
   PutCommand,
   QueryCommand,
-  DeleteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { StoryDAO } from "../interfaces/StoryDAO";
+import { StatusDto } from "tweeter-shared";
 
 export class StoryDynamoDAO implements StoryDAO {
   readonly tableName = "Story";
@@ -15,27 +14,43 @@ export class StoryDynamoDAO implements StoryDAO {
 
   private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
-  async addStory(senderAlias: string, date: string): Promise<void> {
+  async addStory(senderAlias: string, statusDto: StatusDto): Promise<void> {
     const params = {
       TableName: this.tableName,
       Item: {
         [this.pkAttr]: senderAlias,
-        [this.skAttr]: date,
+        [this.skAttr]: statusDto.timestamp,
+        statusDto,
       },
     };
     await this.client.send(new PutCommand(params));
   }
 
-  async getStories(senderAlias: string): Promise<string[]> {
+  async getUserStories(
+    senderAlias: string,
+    lastItemTimestamp?: number,
+    pageSize?: number
+  ): Promise<[StatusDto[], boolean]> {
     const params = {
       TableName: this.tableName,
       KeyConditionExpression: `${this.pkAttr} = :sender`,
       ExpressionAttributeValues: {
         ":sender": senderAlias,
       },
+      Limit: pageSize,
+      ExclusiveStartKey: lastItemTimestamp
+        ? {
+            [this.pkAttr]: senderAlias,
+            [this.skAttr]: lastItemTimestamp,
+          }
+        : undefined,
     };
 
     const output = await this.client.send(new QueryCommand(params));
-    return output.Items?.map((item) => item[this.skAttr]) || [];
+
+    const statusDtos = output.Items?.map((item) => item.statusDto) || [];
+
+    const hasMorePages = output.LastEvaluatedKey !== undefined;
+    return [statusDtos, hasMorePages];
   }
 }

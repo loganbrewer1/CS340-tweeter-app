@@ -5,16 +5,27 @@ import {
   BatchGetCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { User, UserDto } from "tweeter-shared";
+import { UserDto } from "tweeter-shared"; // Assuming UserDto is imported
 import { UserDAO } from "../interfaces/UserDAO";
 
 export class UserDynamoDAO implements UserDAO {
   readonly tableName = "User";
-  readonly pkAttr = "alias";
+  readonly pkAttr = "alias"; // Assuming the primary key is "alias"
 
   private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
-  async getUser(alias: string): Promise<User | null> {
+  async createUser(userDto: UserDto): Promise<void> {
+    const params = {
+      TableName: this.tableName,
+      Item: {
+        [this.pkAttr]: userDto.alias,
+        userDto: JSON.stringify(userDto),
+      },
+    };
+    await this.client.send(new PutCommand(params));
+  }
+
+  async getUser(alias: string): Promise<UserDto | null> {
     const params = {
       TableName: this.tableName,
       Key: {
@@ -23,67 +34,32 @@ export class UserDynamoDAO implements UserDAO {
     };
 
     const output = await this.client.send(new GetCommand(params));
-
-    if (!output.Item) {
-      return null;
+    if (output.Item) {
+      return JSON.parse(output.Item.userDto);
     }
-
-    const dto: UserDto = {
-      alias: output.Item.alias,
-      imageUrl: output.Item.imageUrl,
-      firstName: output.Item.firstname,
-      lastName: output.Item.lastname,
-    };
-
-    return User.fromDto(dto);
+    return null;
   }
 
-  async createUser(newUser: User): Promise<void> {
-    const params = {
-      TableName: this.tableName,
-      Item: {
-        [this.pkAttr]: newUser.alias,
-        imageUrl: newUser.imageUrl,
-        firstname: newUser.firstName,
-        lastname: newUser.lastName,
-      },
-    };
-    await this.client.send(new PutCommand(params));
-  }
-
-  async batchGetUsersByAliases(aliases: Set<string>): Promise<User[]> {
-    if (aliases && aliases.size === 0) {
-      return [];
-    }
-
-    const aliasArray = Array.from(aliases);
-
-    const keys = aliasArray.map<Record<string, {}>>((alias) => ({
-      [this.pkAttr]: alias,
-    }));
-
+  async getBatchUsersByAliases(aliases: string[]): Promise<UserDto[]> {
     const params = {
       RequestItems: {
         [this.tableName]: {
-          Keys: keys,
+          Keys: aliases.map((alias) => ({ [this.pkAttr]: alias })),
         },
       },
     };
 
-    const result = await this.client.send(new BatchGetCommand(params));
+    const output = await this.client.send(new BatchGetCommand(params));
+    const userDtos: UserDto[] = [];
 
-    if (result.Responses) {
-      return result.Responses[this.tableName].map<User>(
-        (item) =>
-          User.fromDto({
-            alias: item[this.pkAttr],
-            imageUrl: item.imageUrl,
-            firstName: item.firstName,
-            lastName: item.lastName,
-          })!
-      );
-    } else {
-      return [];
-    }
+    output.Responses?.[this.tableName]?.forEach((item) => {
+      if (item.userDto) {
+        userDtos.push(JSON.parse(item.userDto));
+      }
+    });
+
+    return userDtos;
   }
 }
+
+export default UserDynamoDAO;

@@ -1,10 +1,10 @@
-import { Status } from "tweeter-shared";
+import { StatusDto } from "tweeter-shared";
 
 export interface StoryDAO {
-  addStoryStatus(senderAlias: string, status: Status): Promise<void>;
-  getUserStory(
+  addStory(senderAlias: string, status: StatusDto): Promise<void>;
+  getUserStories(
     senderAlias: string,
     lastItemTimestamp?: number,
     pageSize?: number
-  ): Promise<[Status[], boolean]>;
+  ): Promise<[StatusDto[], boolean]>;
 }

@@ -1,7 +1,7 @@
-import { User } from "tweeter-shared";
+import { UserDto } from "tweeter-shared";
 
 export interface UserDAO {
-  createUser(user: User): Promise<void>;
-  getUser(alias: string): Promise<User | null>;
-  batchGetUsersByAliases(aliases: Set<string>): Promise<User[]>;
+  createUser(user: UserDto): Promise<void>;
+  getUser(alias: string): Promise<UserDto | null>;
+  getBatchUsersByAliases(aliases: string[]): Promise<UserDto[]>;
 }
