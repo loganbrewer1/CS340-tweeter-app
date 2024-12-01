@@ -1,7 +1,7 @@
 import { Status, StatusDto } from "tweeter-shared";
 import { FeedDynamoDAO } from "../dao/dynamodb/FeedDynamoDAO";
 import { StoryDynamoDAO } from "../dao/dynamodb/StoryDynamoDAO";
-import { AuthTokenDynamoDAO } from "../dao/dynamodb/AuthTokenDynamoDAO"; // Import AuthService for token validation
+import { AuthTokenDynamoDAO } from "../dao/dynamodb/AuthTokenDynamoDAO";
 
 export class StatusService {
   private feedDAO: FeedDynamoDAO;
