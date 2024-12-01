@@ -35,6 +35,7 @@ export class UserDynamoDAO implements UserDAO {
     };
 
     const output = await this.client.send(new GetCommand(params));
+    console.log(output)
     if (output.Item) {
       return [output.Item.userDto, output.Item.password];
     }

@@ -40,6 +40,7 @@ export class UserService {
     userImageBytes: string,
     imageFileExtension: string
   ): Promise<[User, AuthToken]> {
+    console.log('Checking if alias is already taken')
     const existingUserDetails = await this.userDAO.getUser(alias);
     if (existingUserDetails) {
       throw new Error("Alias already taken.");
@@ -48,6 +49,7 @@ export class UserService {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    console.log('Attempting to put new image in s3 bucket')
     const fileName = `${alias}-profile.${imageFileExtension}`;
     const imageUrl = await this.imageDAO.putImage(fileName, userImageBytes);
 
@@ -61,6 +63,7 @@ export class UserService {
     const newUser: User = User.fromDto(user)!
 
     try {
+      console.log('Attempting to create new user...')
       await this.userDAO.createUser(user, hashedPassword);
     } catch (error) {
       console.error("Error saving user to DynamoDB:", error);

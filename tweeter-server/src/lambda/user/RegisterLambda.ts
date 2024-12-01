@@ -10,7 +10,7 @@ export const handler = async (
     request.lastName,
     request.alias,
     request.password,
-    request.imageFileExtension,
+    request.userImageBytes,
     request.imageFileExtension
   );
 
