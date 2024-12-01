@@ -7,7 +7,7 @@ export const handler = async (
   const followService = new FollowService();
   const count = await followService.getFollowerCount(
     request.token,
-    request.user
+    request.user.alias
   );
 
   return {

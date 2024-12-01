@@ -11,11 +11,12 @@ export class FollowService {
     this.authTokenDAO = new AuthTokenDynamoDAO();
   }
 
-  // Helper function to validate the AuthToken
-  private async checkAuthTokenValidity(token: string): Promise<void> {
-    const isValid = await this.authTokenDAO.doesAuthTokenExist(token);
-    if (!isValid) {
+  private async checkAuthTokenValidity(token: string): Promise<string> {
+    const userAlias = await this.authTokenDAO.doesAuthTokenExist(token);
+    if (!userAlias) {
       throw new Error("Invalid authentication token.");
+    } else {
+      return userAlias
     }
   }
 
@@ -30,30 +31,29 @@ export class FollowService {
     return followers.some((follower) => follower.alias === user.alias);
   }
 
-  public async getFolloweeCount(token: string, user: UserDto): Promise<number> {
+  public async getFolloweeCount(token: string, user: string): Promise<number> {
     await this.checkAuthTokenValidity(token);
 
-    const followees = await this.followDAO.getFollowees(user.alias);
+    const followees = await this.followDAO.getFollowees(user);
     return followees.length;
   }
 
-  public async getFollowerCount(token: string, user: UserDto): Promise<number> {
+  public async getFollowerCount(token: string, user: string): Promise<number> {
     await this.checkAuthTokenValidity(token);
 
-    const followers = await this.followDAO.getFollowers(user.alias);
+    const followers = await this.followDAO.getFollowers(user);
     return followers.length;
   }
 
   public async follow(
     token: string,
-    userToFollow: UserDto,
-    currentUser: UserDto
+    userToFollow: UserDto
   ): Promise<[followerCount: number, followeeCount: number]> {
-    await this.checkAuthTokenValidity(token);
+    const currentUser = await this.checkAuthTokenValidity(token);
 
-    await this.followDAO.followUser(currentUser.alias, userToFollow.alias);
+    await this.followDAO.followUser(currentUser, userToFollow.alias);
 
-    const followerCount = await this.getFollowerCount(token, userToFollow);
+    const followerCount = await this.getFollowerCount(token, userToFollow.alias);
     const followeeCount = await this.getFolloweeCount(token, currentUser);
 
     return [followerCount, followeeCount];
@@ -61,14 +61,13 @@ export class FollowService {
 
   public async unfollow(
     token: string,
-    userToUnfollow: UserDto,
-    currentUser: UserDto
+    userToUnfollow: UserDto
   ): Promise<[followerCount: number, followeeCount: number]> {
-    await this.checkAuthTokenValidity(token);
+    const currentUser = await this.checkAuthTokenValidity(token);
 
-    await this.followDAO.unfollowUser(currentUser.alias, userToUnfollow.alias);
+    await this.followDAO.unfollowUser(currentUser, userToUnfollow.alias);
 
-    const followerCount = await this.getFollowerCount(token, userToUnfollow);
+    const followerCount = await this.getFollowerCount(token, userToUnfollow.alias);
     const followeeCount = await this.getFolloweeCount(token, currentUser);
 
     return [followerCount, followeeCount];

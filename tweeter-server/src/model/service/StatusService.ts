@@ -15,8 +15,8 @@ export class StatusService {
   }
 
   private async checkAuthTokenValidity(token: string): Promise<void> {
-    const isValid = await this.authTokenDAO.doesAuthTokenExist(token);
-    if (!isValid) {
+    const userAlias = await this.authTokenDAO.doesAuthTokenExist(token);
+    if (!userAlias) {
       throw new Error("Invalid authentication token.");
     }
   }

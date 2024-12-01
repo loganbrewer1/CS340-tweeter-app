@@ -67,7 +67,7 @@ export class UserService {
       throw new Error("Could not save user.");
     }
 
-    const token: string = await this.authTokenDAO.createAuthToken();
+    const token: string = await this.authTokenDAO.createAuthToken(newUser.alias);
     const authToken = new AuthToken(token, Date.now())
 
     return [newUser, authToken];
@@ -92,7 +92,7 @@ export class UserService {
 
     const newUser: User = User.fromDto(existingUser)!;
 
-    const token: string = await this.authTokenDAO.createAuthToken();
+    const token: string = await this.authTokenDAO.createAuthToken(newUser.alias);
     const authToken = new AuthToken(token, Date.now());
 
     return [newUser, authToken];

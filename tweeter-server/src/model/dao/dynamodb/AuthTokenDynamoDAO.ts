@@ -17,12 +17,13 @@ export class AuthTokenDynamoDAO {
     return uuidv4();
   }
 
-  async createAuthToken(): Promise<string> {
+  async createAuthToken(alias: string): Promise<string> {
     const authToken = this.generateAuthToken();
     const params = {
       TableName: this.tableName,
       Item: {
         [this.pkAttr]: authToken,
+        alias
       },
     };
     await this.client.send(new PutCommand(params));
@@ -30,7 +31,7 @@ export class AuthTokenDynamoDAO {
     return authToken;
   }
 
-  async doesAuthTokenExist(authToken: string): Promise<boolean> {
+  async doesAuthTokenExist(authToken: string): Promise<string | null> {
     const params = {
       TableName: this.tableName,
       Key: {
@@ -39,7 +40,11 @@ export class AuthTokenDynamoDAO {
     };
 
     const output = await this.client.send(new GetCommand(params));
-    return !!output.Item;
+    if(!output.Item) {
+        return null;
+    } else {
+        return output.Item.alias;
+    }
   }
 
   async deleteAuthToken(authToken: string): Promise<void> {
