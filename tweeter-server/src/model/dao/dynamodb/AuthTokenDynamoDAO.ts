@@ -1,34 +1,40 @@
 import {
   DynamoDBDocumentClient,
-  GetCommand,
   PutCommand,
-  QueryCommand,
+  GetCommand,
   DeleteCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { v4 as uuidv4 } from "uuid";
 
-export class AuthTokenDAO {
+export class AuthTokenDynamoDAO {
   readonly tableName = "AuthToken";
   readonly pkAttr = "token";
 
   private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
-  async storeToken(token: string, ttl: number): Promise<void> {
+  private generateAuthToken(): string {
+    return uuidv4();
+  }
+
+  async createAuthToken(): Promise<string> {
+    const authToken = this.generateAuthToken();
     const params = {
       TableName: this.tableName,
       Item: {
-        [this.pkAttr]: token,
-        ttl,
+        [this.pkAttr]: authToken,
       },
     };
     await this.client.send(new PutCommand(params));
+
+    return authToken;
   }
 
-  async validateToken(token: string): Promise<boolean> {
+  async doesAuthTokenExist(authToken: string): Promise<boolean> {
     const params = {
       TableName: this.tableName,
       Key: {
-        [this.pkAttr]: token,
+        [this.pkAttr]: authToken,
       },
     };
 
@@ -36,11 +42,11 @@ export class AuthTokenDAO {
     return !!output.Item;
   }
 
-  async deleteToken(token: string): Promise<void> {
+  async deleteAuthToken(authToken: string): Promise<void> {
     const params = {
       TableName: this.tableName,
       Key: {
-        [this.pkAttr]: token,
+        [this.pkAttr]: authToken,
       },
     };
     await this.client.send(new DeleteCommand(params));
