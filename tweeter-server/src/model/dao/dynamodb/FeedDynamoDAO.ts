@@ -46,7 +46,7 @@ export class FeedDynamoDAO implements FeedDAO {
 
   async getFeedForUser(
     receiverAlias: string,
-    lastItemTimestamp?: string,
+    lastItemTimestamp?: number,
     pageSize: number = 10
   ): Promise<[StatusDto[], boolean]> {
     const params = {

@@ -1,13 +1,42 @@
-import { Status, FakeData, StatusDto } from "tweeter-shared";
+import { Status, StatusDto } from "tweeter-shared";
+import { FeedDynamoDAO } from "../dao/dynamodb/FeedDynamoDAO";
+import { StoryDynamoDAO } from "../dao/dynamodb/StoryDynamoDAO";
+import { AuthTokenDynamoDAO } from "../dao/dynamodb/AuthTokenDynamoDAO"; // Import AuthService for token validation
 
 export class StatusService {
+  private feedDAO: FeedDynamoDAO;
+  private storyDAO: StoryDynamoDAO;
+  private authTokenDAO: AuthTokenDynamoDAO;
+
+  constructor() {
+    this.feedDAO = new FeedDynamoDAO();
+    this.storyDAO = new StoryDynamoDAO();
+    this.authTokenDAO = new AuthTokenDynamoDAO();
+  }
+
+  private async checkAuthTokenValidity(token: string): Promise<void> {
+    const isValid = await this.authTokenDAO.doesAuthTokenExist(token);
+    if (!isValid) {
+      throw new Error("Invalid authentication token.");
+    }
+  }
+
   public async loadMoreFeedItems(
     token: string,
     userAlias: string,
     pageSize: number,
     lastItem: StatusDto | null
   ): Promise<[StatusDto[], boolean]> {
-    return this.getFakeData(lastItem, pageSize);
+    this.checkAuthTokenValidity(token)
+    const lastItemTimestamp = lastItem ? lastItem.timestamp : undefined;
+
+    const [feedItems, hasMorePages] = await this.feedDAO.getFeedForUser(
+      userAlias,
+      lastItemTimestamp,
+      pageSize
+    );
+
+    return [feedItems, hasMorePages];
   }
 
   public async loadMoreStoryItems(
@@ -16,27 +45,31 @@ export class StatusService {
     pageSize: number,
     lastItem: StatusDto | null
   ): Promise<[StatusDto[], boolean]> {
-    return this.getFakeData(lastItem, pageSize);
+    this.checkAuthTokenValidity(token);
+
+    const lastItemTimestamp = lastItem ? lastItem.timestamp : undefined;
+
+    const [storyItems, hasMorePages] = await this.storyDAO.getUserStories(
+      userAlias,
+      lastItemTimestamp,
+      pageSize
+    );
+
+    return [storyItems, hasMorePages];
   }
 
   public async postStatus(
     token: string,
     newStatus: StatusDto | null
   ): Promise<void> {
-    // Pause so we can see the logging out message. Remove when connected to the server
-    await new Promise((f) => setTimeout(f, 2000));
-  }
+    this.checkAuthTokenValidity(token);
 
-  private async getFakeData(
-    lastItem: StatusDto | null,
-    pageSize: number
-  ): Promise<[StatusDto[], boolean]> {
-    const [items, hasMore] = FakeData.instance.getPageOfStatuses(
-      Status.fromDto(lastItem),
-      pageSize
-    );
-    const dtos = items.map((user) => user.dto);
-    return [dtos, hasMore];
+    if (!newStatus) {
+      throw new Error("Status cannot be null.");
+    }
+
+    await this.feedDAO.addStatusToFeeds(newStatus.user.alias, newStatus);
+    await this.storyDAO.addStory(newStatus.user.alias, newStatus);
   }
 }
 
