@@ -59,7 +59,7 @@ export class FeedDynamoDAO implements FeedDAO {
       ExclusiveStartKey: lastItemTimestamp
         ? {
             [this.pkAttr]: receiverAlias,
-            [this.skAttr]: lastItemTimestamp,
+            [this.skAttr]: String(lastItemTimestamp),
           }
         : undefined,
     };

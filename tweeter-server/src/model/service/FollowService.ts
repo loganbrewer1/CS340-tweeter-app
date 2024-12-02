@@ -39,6 +39,7 @@ export class FollowService {
   }
 
   public async getFollowerCount(token: string, user: string): Promise<number> {
+    console.log('Check auth token validity...')
     await this.checkAuthTokenValidity(token);
 
     const followers = await this.followDAO.getFollowers(user);
@@ -54,7 +55,7 @@ export class FollowService {
     await this.followDAO.followUser(currentUser, userToFollow.alias);
 
     const followerCount = await this.getFollowerCount(token, userToFollow.alias);
-    const followeeCount = await this.getFolloweeCount(token, currentUser);
+    const followeeCount = await this.getFolloweeCount(token, userToFollow.alias);
 
     return [followerCount, followeeCount];
   }
@@ -68,7 +69,7 @@ export class FollowService {
     await this.followDAO.unfollowUser(currentUser, userToUnfollow.alias);
 
     const followerCount = await this.getFollowerCount(token, userToUnfollow.alias);
-    const followeeCount = await this.getFolloweeCount(token, currentUser);
+    const followeeCount = await this.getFolloweeCount(token, userToUnfollow.alias);
 
     return [followerCount, followeeCount];
   }

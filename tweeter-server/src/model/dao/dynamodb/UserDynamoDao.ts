@@ -20,7 +20,7 @@ export class UserDynamoDAO implements UserDAO {
       Item: {
         [this.pkAttr]: userDto.alias,
         userDto: userDto,
-        password: hashedPassword
+        password: hashedPassword,
       },
     };
     await this.client.send(new PutCommand(params));
@@ -35,7 +35,7 @@ export class UserDynamoDAO implements UserDAO {
     };
 
     const output = await this.client.send(new GetCommand(params));
-    console.log(output)
+    console.log(output);
     if (output.Item) {
       return [output.Item.userDto, output.Item.password];
     }
@@ -43,6 +43,11 @@ export class UserDynamoDAO implements UserDAO {
   }
 
   async getBatchUsersByAliases(aliases: string[]): Promise<UserDto[]> {
+    if (!aliases || aliases.length === 0) {
+      console.log('No users found in getBachtUsers');
+      return [];
+    }
+
     const params = {
       RequestItems: {
         [this.tableName]: {

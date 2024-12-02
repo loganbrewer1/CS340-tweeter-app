@@ -46,7 +46,6 @@ export class StatusService {
     lastItem: StatusDto | null
   ): Promise<[StatusDto[], boolean]> {
     this.checkAuthTokenValidity(token);
-
     const lastItemTimestamp = lastItem ? lastItem.timestamp : undefined;
 
     const [storyItems, hasMorePages] = await this.storyDAO.getUserStories(

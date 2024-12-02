@@ -19,7 +19,7 @@ export class StoryDynamoDAO implements StoryDAO {
       TableName: this.tableName,
       Item: {
         [this.pkAttr]: senderAlias,
-        [this.skAttr]: statusDto.timestamp,
+        [this.skAttr]: String(statusDto.timestamp),
         statusDto,
       },
     };
@@ -41,7 +41,7 @@ export class StoryDynamoDAO implements StoryDAO {
       ExclusiveStartKey: lastItemTimestamp
         ? {
             [this.pkAttr]: senderAlias,
-            [this.skAttr]: lastItemTimestamp,
+            [this.skAttr]: String(lastItemTimestamp),
           }
         : undefined,
     };
