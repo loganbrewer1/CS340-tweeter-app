@@ -1,5 +1,5 @@
 export interface AuthTokenDAO {
-  createAuthToken(token: string, userAlias: string): Promise<void>;
-  validateAuthToken(token: string): Promise<boolean>;
+  createAuthToken(userAlias: string): Promise<string>;
+  doesAuthTokenExist(token: string): Promise<string | null>;
   deleteAuthToken(token: string): Promise<void>;
 }

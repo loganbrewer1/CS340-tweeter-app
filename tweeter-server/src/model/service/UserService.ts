@@ -1,18 +1,22 @@
 import { AuthToken, User, UserDto } from "tweeter-shared";
 import bcrypt from "bcryptjs";
-import { ImageS3DAO } from "../dao/dynamodb/ImageS3DAO";
-import { UserDynamoDAO } from "../dao/dynamodb/UserDynamoDAO";
-import { AuthTokenDynamoDAO } from "../dao/dynamodb/AuthTokenDynamoDAO";
+import { AuthTokenDAO } from "../dao/interfaces/AuthTokenDAO";
+import { ImageDAO } from "../dao/interfaces/ImageDAO";
+import { UserDAO } from "../dao/interfaces/UserDAO";
 
 export class UserService {
-  private imageDAO: ImageS3DAO;
-  private userDAO: UserDynamoDAO;
-  private authTokenDAO: AuthTokenDynamoDAO;
+  private imageDAO: ImageDAO;
+  private userDAO: UserDAO;
+  private authTokenDAO: AuthTokenDAO;
 
-  constructor() {
-    this.imageDAO = new ImageS3DAO();
-    this.userDAO = new UserDynamoDAO();
-    this.authTokenDAO = new AuthTokenDynamoDAO();
+  constructor(
+    imageDAO: ImageDAO,
+    userDAO: UserDAO,
+    authTokenDAO: AuthTokenDAO
+  ) {
+    this.imageDAO = imageDAO;
+    this.userDAO = userDAO;
+    this.authTokenDAO = authTokenDAO;
   }
 
   public async getUser(token: string, alias: string): Promise<User | null> {
@@ -23,7 +27,7 @@ export class UserService {
         return null;
       }
 
-      const user: User = User.fromDto(userDetails[0])!
+      const user: User = User.fromDto(userDetails[0])!;
 
       return user;
     } catch (error) {
@@ -40,7 +44,7 @@ export class UserService {
     userImageBytes: string,
     imageFileExtension: string
   ): Promise<[User, AuthToken]> {
-    console.log('Checking if alias is already taken')
+    console.log("Checking if alias is already taken");
     const existingUserDetails = await this.userDAO.getUser(alias);
     if (existingUserDetails) {
       throw new Error("Alias already taken.");
@@ -49,7 +53,7 @@ export class UserService {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    console.log('Attempting to put new image in s3 bucket')
+    console.log("Attempting to put new image in s3 bucket");
     const fileName = `${alias}-profile.${imageFileExtension}`;
     const imageUrl = await this.imageDAO.putImage(fileName, userImageBytes);
 
@@ -60,18 +64,20 @@ export class UserService {
       imageUrl: imageUrl,
     };
 
-    const newUser: User = User.fromDto(user)!
+    const newUser: User = User.fromDto(user)!;
 
     try {
-      console.log('Attempting to create new user...')
+      console.log("Attempting to create new user...");
       await this.userDAO.createUser(user, hashedPassword);
     } catch (error) {
       console.error("Error saving user to DynamoDB:", error);
       throw new Error("Could not save user.");
     }
 
-    const token: string = await this.authTokenDAO.createAuthToken(newUser.alias);
-    const authToken = new AuthToken(token, Date.now())
+    const token: string = await this.authTokenDAO.createAuthToken(
+      newUser.alias
+    );
+    const authToken = new AuthToken(token, Date.now());
 
     return [newUser, authToken];
   }
@@ -95,7 +101,9 @@ export class UserService {
 
     const newUser: User = User.fromDto(existingUser)!;
 
-    const token: string = await this.authTokenDAO.createAuthToken(newUser.alias);
+    const token: string = await this.authTokenDAO.createAuthToken(
+      newUser.alias
+    );
     const authToken = new AuthToken(token, Date.now());
 
     return [newUser, authToken];

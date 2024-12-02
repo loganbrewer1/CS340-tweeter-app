@@ -3,8 +3,9 @@ import {
   PutObjectCommand,
   ObjectCannedACL,
 } from "@aws-sdk/client-s3";
+import { ImageDAO } from "../interfaces/ImageDAO";
 
-export class ImageS3DAO {
+export class ImageS3DAO implements ImageDAO {
   private BUCKET = "tweeter-wizard-profile-pictures";
   private REGION = "us-west-2";
 

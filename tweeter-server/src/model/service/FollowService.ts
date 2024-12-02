@@ -1,14 +1,14 @@
 import { UserDto } from "tweeter-shared";
-import { FollowDynamoDAO } from "../dao/dynamodb/FollowDynamoDAO";
-import { AuthTokenDynamoDAO } from "../dao/dynamodb/AuthTokenDynamoDAO";
+import { AuthTokenDAO } from "../dao/interfaces/AuthTokenDAO";
+import { FollowDAO } from "../dao/interfaces/FollowDAO";
 
 export class FollowService {
-  private followDAO: FollowDynamoDAO;
-  private authTokenDAO: AuthTokenDynamoDAO;
+  private followDAO: FollowDAO;
+  private authTokenDAO: AuthTokenDAO;
 
-  constructor() {
-    this.followDAO = new FollowDynamoDAO();
-    this.authTokenDAO = new AuthTokenDynamoDAO();
+  constructor(followDAO: FollowDAO, authTokenDAO: AuthTokenDAO) {
+    this.followDAO = followDAO;
+    this.authTokenDAO = authTokenDAO;
   }
 
   private async checkAuthTokenValidity(token: string): Promise<string> {

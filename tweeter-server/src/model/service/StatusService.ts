@@ -1,17 +1,21 @@
-import { Status, StatusDto } from "tweeter-shared";
-import { FeedDynamoDAO } from "../dao/dynamodb/FeedDynamoDAO";
-import { StoryDynamoDAO } from "../dao/dynamodb/StoryDynamoDAO";
-import { AuthTokenDynamoDAO } from "../dao/dynamodb/AuthTokenDynamoDAO";
+import { StatusDto } from "tweeter-shared";
+import { AuthTokenDAO } from "../dao/interfaces/AuthTokenDAO";
+import { FeedDAO } from "../dao/interfaces/FeedDAO";
+import { StoryDAO } from "../dao/interfaces/StoryDAO";
 
 export class StatusService {
-  private feedDAO: FeedDynamoDAO;
-  private storyDAO: StoryDynamoDAO;
-  private authTokenDAO: AuthTokenDynamoDAO;
+  private feedDAO: FeedDAO;
+  private storyDAO: StoryDAO;
+  private authTokenDAO: AuthTokenDAO;
 
-  constructor() {
-    this.feedDAO = new FeedDynamoDAO();
-    this.storyDAO = new StoryDynamoDAO();
-    this.authTokenDAO = new AuthTokenDynamoDAO();
+  constructor(
+    feedDAO: FeedDAO,
+    storyDAO: StoryDAO,
+    authTokenDAO: AuthTokenDAO
+  ) {
+    this.feedDAO = feedDAO;
+    this.storyDAO = storyDAO;
+    this.authTokenDAO = authTokenDAO;
   }
 
   private async checkAuthTokenValidity(token: string): Promise<void> {
@@ -27,7 +31,7 @@ export class StatusService {
     pageSize: number,
     lastItem: StatusDto | null
   ): Promise<[StatusDto[], boolean]> {
-    this.checkAuthTokenValidity(token)
+    this.checkAuthTokenValidity(token);
     const lastItemTimestamp = lastItem ? lastItem.timestamp : undefined;
 
     const [feedItems, hasMorePages] = await this.feedDAO.getFeedForUser(

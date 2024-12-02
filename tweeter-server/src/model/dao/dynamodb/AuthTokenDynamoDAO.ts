@@ -6,8 +6,9 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { v4 as uuidv4 } from "uuid";
+import { AuthTokenDAO } from "../interfaces/AuthTokenDAO";
 
-export class AuthTokenDynamoDAO {
+export class AuthTokenDynamoDAO implements AuthTokenDAO {
   readonly tableName = "AuthToken";
   readonly pkAttr = "token";
 
