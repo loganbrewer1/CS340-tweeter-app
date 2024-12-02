@@ -59,7 +59,7 @@ const AuthenticatedRoutes = () => {
             <ItemScroller
               key={1}
               presenterGenerator={(view: PagedItemView<Status>) =>
-                new FeedPresenter(view)
+                new StoryPresenter(view)
               }
               itemComponentGenerator={(status) => <StatusItem value={status} />}
             />
@@ -72,13 +72,14 @@ const AuthenticatedRoutes = () => {
             <ItemScroller
               key={2}
               presenterGenerator={(view: PagedItemView<Status>) =>
-                new StoryPresenter(view)
+                new FeedPresenter(view)
               }
               itemComponentGenerator={(status) => <StatusItem value={status} />}
             />
           }
         />
         <Route
+          key={3}
           path="followees"
           element={
             <ItemScroller
@@ -91,6 +92,7 @@ const AuthenticatedRoutes = () => {
           }
         />
         <Route
+          key={4}
           path="followers"
           element={
             <ItemScroller

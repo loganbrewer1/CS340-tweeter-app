@@ -281,13 +281,26 @@ export class ServerFacade {
     // Handle errors
     if (response.success) {
       if (user == null) {
-        console.error("User does not exist");
-        throw new Error();
+        console.error(
+          "Login failed: User object is null"
+        );
+        throw new Error(
+          "An unexpected error occurred. Please try again later."
+        );
       }
       return [user, authToken];
     } else {
-      console.error(response);
-      throw new Error(response.message ?? "An unknown error occurred");
+      if (response.message === "Invalid alias or password.") {
+        console.error("Login failed: Invalid alias or password.");
+        throw new Error(
+          "Invalid alias or password. Please verify your credentials and try again."
+        );
+      }
+
+      console.error(`Login failed with unexpected error: ${response.message}`);
+      throw new Error(
+        response.message ?? "An unknown error occurred during login."
+      );
     }
   }
 
