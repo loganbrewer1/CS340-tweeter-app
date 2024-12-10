@@ -20,11 +20,27 @@ export class FeedDynamoDAO implements FeedDAO {
     receiverAlias: string,
     newStatusDto: StatusDto
   ): Promise<void> {
-    const followers = await this.followDynamoDAO.getFollowers(receiverAlias);
+    let lastEvaluatedKey: string | undefined = undefined;
+    let hasMoreFollowers = true;
 
-    for (const follower of followers) {
-      const dateAndSenderAlias = `${newStatusDto.timestamp}#${newStatusDto.user.alias}`;
-      await this.addFeedItem(follower.alias, dateAndSenderAlias, newStatusDto);
+    while (hasMoreFollowers) {
+      const result = await this.followDynamoDAO.getFollowers(
+        receiverAlias,
+        10,
+        lastEvaluatedKey
+      );
+
+      for (const follower of result.users) {
+        const dateAndSenderAlias = `${newStatusDto.timestamp}#${newStatusDto.user.alias}`;
+        await this.addFeedItem(
+          follower.alias,
+          dateAndSenderAlias,
+          newStatusDto
+        );
+      }
+
+      lastEvaluatedKey = result.hasMore ? lastEvaluatedKey : undefined;
+      hasMoreFollowers = result.hasMore;
     }
   }
 

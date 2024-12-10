@@ -91,7 +91,10 @@ export class FollowService {
   ): Promise<[UserDto[], boolean]> {
     await this.checkAuthTokenValidity(token);
 
-    const lastEvaluatedKey = lastItem ? lastItem.alias : undefined;
+    const lastEvaluatedKey = lastItem
+      ? { followeeAlias: userAlias, followerAlias: lastItem.alias }
+      : undefined;
+
     const result = await this.followDAO.getFollowers(
       userAlias,
       pageSize,
@@ -109,7 +112,10 @@ export class FollowService {
   ): Promise<[UserDto[], boolean]> {
     await this.checkAuthTokenValidity(token);
 
-    const lastEvaluatedKey = lastItem ? lastItem.alias : undefined;
+    const lastEvaluatedKey = lastItem
+      ? { followerAlias: userAlias, followeeAlias: lastItem.alias }
+      : undefined;
+
     const result = await this.followDAO.getFollowees(
       userAlias,
       pageSize,

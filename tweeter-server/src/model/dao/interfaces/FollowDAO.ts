@@ -6,13 +6,13 @@ export interface FollowDAO {
   getFollowers(
     followeeAlias: string,
     limit: number,
-    exclusiveStartKey?: string
+    exclusiveStartKey?: { followerAlias: string; followeeAlias: string }
   ): Promise<{ users: UserDto[]; hasMore: boolean }>;
   getFollowerCount(followeeAlias: string): Promise<number>;
   getFollowees(
     followerAlias: string,
     limit: number,
-    exclusiveStartKey?: string
+    exclusiveStartKey?: { followerAlias: string; followeeAlias: string }
   ): Promise<{ followees: UserDto[]; hasMore: boolean }>;
   getFolloweeCount(followerAlias: string): Promise<number>;
   isFollower(followerAlias: string, followeeAlias: string): Promise<boolean>;

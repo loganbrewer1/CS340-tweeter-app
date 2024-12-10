@@ -49,7 +49,7 @@ export class FollowDynamoDAO implements FollowDAO {
   async getFollowees(
     followerAlias: string,
     limit: number,
-    exclusiveStartKey?: string
+    exclusiveStartKey?: { followerAlias: string; followeeAlias: string }
   ): Promise<{ followees: UserDto[]; hasMore: boolean }> {
     const params: any = {
       TableName: this.tableName,
@@ -58,8 +58,11 @@ export class FollowDynamoDAO implements FollowDAO {
         ":follower": followerAlias,
       },
       Limit: limit,
-      ExclusiveStartKey: exclusiveStartKey,
     };
+
+    if (exclusiveStartKey) {
+      params.ExclusiveStartKey = exclusiveStartKey;
+    }
 
     const output = await this.client.send(new QueryCommand(params));
     const followeeAliases =
@@ -91,7 +94,7 @@ export class FollowDynamoDAO implements FollowDAO {
   async getFollowers(
     followeeAlias: string,
     limit: number,
-    exclusiveStartKey?: string
+    exclusiveStartKey?: { followeeAlias: string; followerAlias: string }
   ): Promise<{ users: UserDto[]; hasMore: boolean }> {
     const params: any = {
       TableName: this.tableName,
@@ -101,8 +104,11 @@ export class FollowDynamoDAO implements FollowDAO {
         ":followee": followeeAlias,
       },
       Limit: limit,
-      ExclusiveStartKey: exclusiveStartKey,
     };
+
+    if (exclusiveStartKey) {
+      params.ExclusiveStartKey = exclusiveStartKey;
+    }
 
     const output = await this.client.send(new QueryCommand(params));
     const followerAliases =
@@ -155,6 +161,6 @@ export class FollowDynamoDAO implements FollowDAO {
       new QueryCommand(params)
     );
 
-     return output.Items ? output.Items.length > 0 : false;
+    return output.Items ? output.Items.length > 0 : false;
   }
 }
