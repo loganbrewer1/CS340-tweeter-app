@@ -3,6 +3,7 @@ import {
   PutCommand,
   QueryCommand,
   DeleteCommand,
+  QueryCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { FollowDAO } from "../interfaces/FollowDAO";
@@ -64,6 +65,20 @@ export class FollowDynamoDAO implements FollowDAO {
     return userDtos;
   }
 
+  async getFolloweeCount(followerAlias: string): Promise<number> {
+    const params: QueryCommandInput = {
+      TableName: this.tableName,
+      KeyConditionExpression: `${this.pkAttr} = :follower`,
+      ExpressionAttributeValues: {
+        ":follower": followerAlias,
+      },
+      Select: "COUNT",
+    };
+
+    const output = await this.client.send(new QueryCommand(params));
+    return output.Count || 0;
+  }
+
   async getFollowers(followeeAlias: string): Promise<UserDto[]> {
     const params = {
       TableName: this.tableName,
@@ -82,5 +97,20 @@ export class FollowDynamoDAO implements FollowDAO {
       followerAliases
     );
     return userDtos;
+  }
+
+  async getFollowerCount(followeeAlias: string): Promise<number> {
+    const params: QueryCommandInput = {
+      TableName: this.tableName,
+      IndexName: "followeeAliasIndex",
+      KeyConditionExpression: `${this.skAttr} = :followee`,
+      ExpressionAttributeValues: {
+        ":followee": followeeAlias,
+      },
+      Select: "COUNT",
+    };
+
+    const output = await this.client.send(new QueryCommand(params));
+    return output.Count || 0;
   }
 }

@@ -34,16 +34,14 @@ export class FollowService {
   public async getFolloweeCount(token: string, user: string): Promise<number> {
     await this.checkAuthTokenValidity(token);
 
-    const followees = await this.followDAO.getFollowees(user);
-    return followees.length;
+    return await this.followDAO.getFolloweeCount(user);
   }
 
   public async getFollowerCount(token: string, user: string): Promise<number> {
     console.log('Check auth token validity...')
     await this.checkAuthTokenValidity(token);
 
-    const followers = await this.followDAO.getFollowers(user);
-    return followers.length;
+    return await this.followDAO.getFollowerCount(user);
   }
 
   public async follow(
