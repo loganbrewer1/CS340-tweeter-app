@@ -16,7 +16,7 @@ export class FollowService {
     if (!userAlias) {
       throw new Error("Invalid authentication token.");
     } else {
-      return userAlias
+      return userAlias;
     }
   }
 
@@ -27,8 +27,7 @@ export class FollowService {
   ): Promise<boolean> {
     await this.checkAuthTokenValidity(token);
 
-    const followers = await this.followDAO.getFollowers(selectedUser.alias);
-    return followers.some((follower) => follower.alias === user.alias);
+    return await this.followDAO.isFollower(user.alias, selectedUser.alias);
   }
 
   public async getFolloweeCount(token: string, user: string): Promise<number> {
@@ -38,7 +37,7 @@ export class FollowService {
   }
 
   public async getFollowerCount(token: string, user: string): Promise<number> {
-    console.log('Check auth token validity...')
+    console.log("Check auth token validity...");
     await this.checkAuthTokenValidity(token);
 
     return await this.followDAO.getFollowerCount(user);
@@ -52,8 +51,14 @@ export class FollowService {
 
     await this.followDAO.followUser(currentUser, userToFollow.alias);
 
-    const followerCount = await this.getFollowerCount(token, userToFollow.alias);
-    const followeeCount = await this.getFolloweeCount(token, userToFollow.alias);
+    const followerCount = await this.getFollowerCount(
+      token,
+      userToFollow.alias
+    );
+    const followeeCount = await this.getFolloweeCount(
+      token,
+      userToFollow.alias
+    );
 
     return [followerCount, followeeCount];
   }
@@ -66,8 +71,14 @@ export class FollowService {
 
     await this.followDAO.unfollowUser(currentUser, userToUnfollow.alias);
 
-    const followerCount = await this.getFollowerCount(token, userToUnfollow.alias);
-    const followeeCount = await this.getFolloweeCount(token, userToUnfollow.alias);
+    const followerCount = await this.getFollowerCount(
+      token,
+      userToUnfollow.alias
+    );
+    const followeeCount = await this.getFolloweeCount(
+      token,
+      userToUnfollow.alias
+    );
 
     return [followerCount, followeeCount];
   }
@@ -80,18 +91,14 @@ export class FollowService {
   ): Promise<[UserDto[], boolean]> {
     await this.checkAuthTokenValidity(token);
 
-    const allFollowers = await this.followDAO.getFollowers(userAlias);
-    const startIndex = lastItem
-      ? allFollowers.findIndex((user) => user.alias === lastItem.alias) + 1
-      : 0;
-
-    const paginatedFollowers = allFollowers.slice(
-      startIndex,
-      startIndex + pageSize
+    const lastEvaluatedKey = lastItem ? lastItem.alias : undefined;
+    const result = await this.followDAO.getFollowers(
+      userAlias,
+      pageSize,
+      lastEvaluatedKey
     );
-    const hasMorePages = startIndex + pageSize < allFollowers.length;
 
-    return [paginatedFollowers, hasMorePages];
+    return [result.users, result.hasMore];
   }
 
   public async loadMoreFollowees(
@@ -102,18 +109,14 @@ export class FollowService {
   ): Promise<[UserDto[], boolean]> {
     await this.checkAuthTokenValidity(token);
 
-    const allFollowees = await this.followDAO.getFollowees(userAlias);
-    const startIndex = lastItem
-      ? allFollowees.findIndex((user) => user.alias === lastItem.alias) + 1
-      : 0;
-
-    const paginatedFollowees = allFollowees.slice(
-      startIndex,
-      startIndex + pageSize
+    const lastEvaluatedKey = lastItem ? lastItem.alias : undefined;
+    const result = await this.followDAO.getFollowees(
+      userAlias,
+      pageSize,
+      lastEvaluatedKey
     );
-    const hasMorePages = startIndex + pageSize < allFollowees.length;
 
-    return [paginatedFollowees, hasMorePages];
+    return [result.followees, result.hasMore];
   }
 }
 

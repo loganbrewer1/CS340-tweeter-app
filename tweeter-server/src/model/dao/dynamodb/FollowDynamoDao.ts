@@ -5,7 +5,7 @@ import {
   DeleteCommand,
   QueryCommandInput,
 } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, QueryCommandOutput } from "@aws-sdk/client-dynamodb";
 import { FollowDAO } from "../interfaces/FollowDAO";
 import UserDynamoDAO from "./UserDynamoDAO";
 import { UserDto } from "tweeter-shared";
@@ -46,13 +46,19 @@ export class FollowDynamoDAO implements FollowDAO {
     await this.client.send(new DeleteCommand(params));
   }
 
-  async getFollowees(followerAlias: string): Promise<UserDto[]> {
-    const params = {
+  async getFollowees(
+    followerAlias: string,
+    limit: number,
+    exclusiveStartKey?: string
+  ): Promise<{ followees: UserDto[]; hasMore: boolean }> {
+    const params: any = {
       TableName: this.tableName,
       KeyConditionExpression: `${this.pkAttr} = :follower`,
       ExpressionAttributeValues: {
         ":follower": followerAlias,
       },
+      Limit: limit,
+      ExclusiveStartKey: exclusiveStartKey,
     };
 
     const output = await this.client.send(new QueryCommand(params));
@@ -62,7 +68,10 @@ export class FollowDynamoDAO implements FollowDAO {
     const userDtos = await this.userDynamoDAO.getBatchUsersByAliases(
       followeeAliases
     );
-    return userDtos;
+
+    const hasMore = output.LastEvaluatedKey !== undefined;
+
+    return { followees: userDtos, hasMore };
   }
 
   async getFolloweeCount(followerAlias: string): Promise<number> {
@@ -79,14 +88,20 @@ export class FollowDynamoDAO implements FollowDAO {
     return output.Count || 0;
   }
 
-  async getFollowers(followeeAlias: string): Promise<UserDto[]> {
-    const params = {
+  async getFollowers(
+    followeeAlias: string,
+    limit: number,
+    exclusiveStartKey?: string
+  ): Promise<{ users: UserDto[]; hasMore: boolean }> {
+    const params: any = {
       TableName: this.tableName,
       IndexName: "followeeAliasIndex",
       KeyConditionExpression: `${this.skAttr} = :followee`,
       ExpressionAttributeValues: {
         ":followee": followeeAlias,
       },
+      Limit: limit,
+      ExclusiveStartKey: exclusiveStartKey,
     };
 
     const output = await this.client.send(new QueryCommand(params));
@@ -96,7 +111,10 @@ export class FollowDynamoDAO implements FollowDAO {
     const userDtos = await this.userDynamoDAO.getBatchUsersByAliases(
       followerAliases
     );
-    return userDtos;
+
+    const hasMore = output.LastEvaluatedKey !== undefined;
+
+    return { users: userDtos, hasMore };
   }
 
   async getFollowerCount(followeeAlias: string): Promise<number> {
@@ -112,5 +130,31 @@ export class FollowDynamoDAO implements FollowDAO {
 
     const output = await this.client.send(new QueryCommand(params));
     return output.Count || 0;
+  }
+
+  public async isFollower(
+    followerAlias: string,
+    followeeAlias: string
+  ): Promise<boolean> {
+    const params = {
+      TableName: this.tableName,
+      IndexName: "followeeAliasIndex",
+      KeyConditionExpression:
+        "#followeeAlias = :followeeAlias AND #followerAlias = :followerAlias",
+      ExpressionAttributeNames: {
+        "#followeeAlias": this.skAttr,
+        "#followerAlias": this.pkAttr,
+      },
+      ExpressionAttributeValues: {
+        ":followeeAlias": followeeAlias,
+        ":followerAlias": followerAlias,
+      },
+    };
+
+    const output: QueryCommandOutput = await this.client.send(
+      new QueryCommand(params)
+    );
+
+     return output.Items ? output.Items.length > 0 : false;
   }
 }
