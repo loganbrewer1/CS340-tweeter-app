@@ -2,11 +2,15 @@ import { StatusDto } from "tweeter-shared";
 import { AuthTokenDAO } from "../dao/interfaces/AuthTokenDAO";
 import { FeedDAO } from "../dao/interfaces/FeedDAO";
 import { StoryDAO } from "../dao/interfaces/StoryDAO";
+import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 
 export class StatusService {
+  private sqsClient = new SQSClient();
   private feedDAO: FeedDAO;
   private storyDAO: StoryDAO;
   private authTokenDAO: AuthTokenDAO;
+  private statusFanOutQueueUrl =
+    "https://sqs.us-west-2.amazonaws.com/011528258727/statusFanOutQueue";
 
   constructor(
     feedDAO: FeedDAO,
@@ -71,8 +75,19 @@ export class StatusService {
       throw new Error("Status cannot be null.");
     }
 
-    await this.feedDAO.addStatusToFeeds(newStatus.user.alias, newStatus);
     await this.storyDAO.addStory(newStatus.user.alias, newStatus);
+
+    const messageBody = JSON.stringify({
+      status: newStatus,
+      receiverAlias: newStatus.user.alias,
+    });
+
+    await this.sqsClient.send(
+      new SendMessageCommand({
+        QueueUrl: this.statusFanOutQueueUrl,
+        MessageBody: messageBody,
+      })
+    );
   }
 }
 
