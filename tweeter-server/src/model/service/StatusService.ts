@@ -76,18 +76,19 @@ export class StatusService {
     }
 
     await this.storyDAO.addStory(newStatus.user.alias, newStatus);
+    await this.feedDAO.addStatusToFeeds(newStatus.user.alias, newStatus)
 
-    const messageBody = JSON.stringify({
-      status: newStatus,
-      receiverAlias: newStatus.user.alias,
-    });
+    // const messageBody = JSON.stringify({
+    //   status: newStatus,
+    //   receiverAlias: newStatus.user.alias,
+    // });
 
-    await this.sqsClient.send(
-      new SendMessageCommand({
-        QueueUrl: this.statusFanOutQueueUrl,
-        MessageBody: messageBody,
-      })
-    );
+    // await this.sqsClient.send(
+    //   new SendMessageCommand({
+    //     QueueUrl: this.statusFanOutQueueUrl,
+    //     MessageBody: messageBody,
+    //   })
+    // );
   }
 }
 

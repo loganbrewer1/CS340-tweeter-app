@@ -11,7 +11,6 @@ const userDAO: UserDAO = new UserDynamoDAO();
 const followDAO: FollowDAO = new FollowDynamoDAO();
 
 // Commented out since users are already created
-/*
 async function createUser(alias: string): Promise<void> {
   const user: UserDto = {
     alias,
@@ -23,7 +22,6 @@ async function createUser(alias: string): Promise<void> {
   const password = "superdupersecurepassword";
   await userDAO.createUser(user, password);
 }
-*/
 
 // Batch method to follow users in batches of 25
 async function batchFollowUsers(
@@ -62,7 +60,7 @@ async function populateData(): Promise<void> {
   const targetUserAlias = "@Bard";
 
   console.log(`Target user: ${targetUserAlias}`);
-  //await createUser(targetUserAlias); // Target user is already created in DynamoDB
+  await createUser(targetUserAlias); // Target user is already created in DynamoDB
 
   console.log(`Adding ${totalUsers} followers to ${targetUserAlias}...`);
   const followerAliases = Array.from(
